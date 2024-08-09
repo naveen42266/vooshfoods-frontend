@@ -43,7 +43,7 @@ const useTodos = (): UseTodosReturn => {
 
   const deleteTodo = (id: string) => {
     const prevTodos = todos.filter(todo => todo.id !== id)
-    if (prevTodos?.length == 0) {
+    if (prevTodos?.length === 0) {
       localStorage.setItem('todos', JSON.stringify(prevTodos))
     }
     setTodos(prevTodos => prevTodos.filter(todo => todo.id !== id));
