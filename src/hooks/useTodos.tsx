@@ -18,6 +18,7 @@ interface UseTodosReturn {
 }
 
 const useTodos = (): UseTodosReturn => {
+  // eslint-disable-next-line no-unused-vars
   const [todos, setTodos] = useState<Todo[]>([]);
   const [filter, setFilter] = useState<string>('');  // eslint-disable-next-line
   const [search, setSearch] = useState<string>('');  // eslint-disable-next-line

@@ -17,7 +17,8 @@ interface Todo {
 }
 
 const AddTodoForm: React.FC<AddTodoFormProps> = ({ addTodo, content, handleEmitCancel }) => {
-  const { register, handleSubmit, reset, formState: { } } = useForm<{ text: string }>(); //  const { register, handleSubmit, reset, formState: { errors } } = useForm<{ text: string }>();
+  // eslint-disable-next-line no-unused-vars
+  const { register, handleSubmit, reset, formState: { errors } } = useForm<{ text: string }>(); //  const { register, handleSubmit, reset, formState: { errors } } = useForm<{ text: string }>();
   const [category, setCategory] = useState<string>('');
   const [dueDate, setDueDate] = useState<string>('');
 
