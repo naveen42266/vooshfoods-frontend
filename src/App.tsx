@@ -62,7 +62,7 @@ function App() {
                   <TodoItem todo={todo} toggleComplete={toggleComplete} deleteTodo={deleteTodo} />
                 </li>
               ))}
-            </ul> : todos?.length == 0 && <div className='py-10 flex flex-col justify-center items-center gap-4'>
+            </ul> : todos?.length === 0 && <div className='py-10 flex flex-col justify-center items-center gap-4'>
               <div className={`${isDarkMode && 'text-white'}`}>There is no todo lists.</div>
               <button className="py-2 bg-blue-600 text-white rounded-md hover:bg-blue-500 transition-colors duration-300 w-32" onClick={() => setOpen(true)}>Add new Task</button>
             </div>}
