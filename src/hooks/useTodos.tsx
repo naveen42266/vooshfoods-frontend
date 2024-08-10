@@ -19,12 +19,7 @@ interface UseTodosReturn {
 
 const useTodos = (): UseTodosReturn => {
   const [todos, setTodos] = useState<Todo[]>([]);
-  // const [filter, setFilter] = useState<string>(''); // Remove if not used
-  // const [search, setSearch] = useState<string>(''); // Remove if not used
-
-  let filter = '';
-  let search = '';
-
+  
   useEffect(() => {
     const storedTodos = localStorage.getItem('todos');
     if (storedTodos) {
@@ -67,7 +62,7 @@ const useTodos = (): UseTodosReturn => {
   }, [todos]);
 
   return {
-    todos: searchTodos(search).filter(todo => filterTodos(filter).includes(todo)),
+    todos,
     addTodo,
     toggleComplete,
     deleteTodo,

@@ -10,11 +10,11 @@ const CategoryFilter: React.FC<CategoryFilterProps> = ({ categories, onFilter })
         <div>
             <select
                 onChange={(e) => onFilter(e.target.value)}
-                className="w-full p-2 border rounded-md"
+                className="w-full p-2 border rounded-md capitalize"
             >
                 <option value="">All</option>
                 {categories.map((category) => (
-                    <option key={category} value={category}>
+                    <option key={category} value={category} className='capitalize'>
                         {category}
                     </option>
                 ))}

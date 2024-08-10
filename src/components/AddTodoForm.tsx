@@ -20,6 +20,7 @@ const AddTodoForm: React.FC<AddTodoFormProps> = ({ addTodo, content, handleEmitC
   const { register, handleSubmit, reset } = useForm<{ text: string }>(); // Removed `errors`
   const [category, setCategory] = useState<string>('');
   const [dueDate, setDueDate] = useState<string>('');
+  const categories = ['work', 'personal', 'shopping', 'education', 'health', 'finance', 'hobbies'];
 
   const onSubmit = (data: { text: string }) => {
     const newTodo: Todo = {
@@ -46,13 +47,16 @@ const AddTodoForm: React.FC<AddTodoFormProps> = ({ addTodo, content, handleEmitC
       <select
         value={category}
         onChange={(e) => setCategory(e.target.value)}
-        className="w-full p-2 border rounded-md"
+        className="w-full p-2 border rounded-md capitalize"
       >
         <option value="">Select Category</option>
         {/* Add options for categories */}
-        <option value="work">Work</option>
+        {/* <option value="work">Work</option>
         <option value="personal">Personal</option>
-        <option value="shopping">Shopping</option>
+        <option value="shopping">Shopping</option> */}
+        {categories?.map((each) => (
+          <option value={each} className='capitalize'>{each}</option>
+        ))}
       </select>
       <input
         type="date"

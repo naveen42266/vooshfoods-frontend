@@ -24,7 +24,7 @@ const TodoItem: React.FC<TodoItemProps> = ({ todo, toggleComplete, deleteTodo })
                     onChange={() => toggleComplete(todo.id)}
                     className="form-checkbox"
                 />
-                <span className={`ml-2 text-black ${todo.completed ? 'line-through text-gray-500' : ''}`}>
+                <span className={`ml-2 capitalize ${todo.completed ? 'line-through text-gray-500' : ''}`}>
                     {todo.text}
                     {todo.category && ` (${todo.category})`}
                     {todo.dueDate && ` - ${todo.dueDate}`}
