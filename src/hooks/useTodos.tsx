@@ -18,10 +18,12 @@ interface UseTodosReturn {
 }
 
 const useTodos = (): UseTodosReturn => {
-  // eslint-disable-next-line no-unused-vars
   const [todos, setTodos] = useState<Todo[]>([]);
-  const [filter, setFilter] = useState<string>('');  // eslint-disable-next-line
-  const [search, setSearch] = useState<string>('');  // eslint-disable-next-line
+  // const [filter, setFilter] = useState<string>(''); // Remove if not used
+  // const [search, setSearch] = useState<string>(''); // Remove if not used
+
+  let filter = '';
+  let search = '';
 
   useEffect(() => {
     const storedTodos = localStorage.getItem('todos');
@@ -43,11 +45,11 @@ const useTodos = (): UseTodosReturn => {
   };
 
   const deleteTodo = (id: string) => {
-    const prevTodos = todos.filter(todo => todo.id !== id)
-    if (prevTodos?.length === 0) {
-      localStorage.setItem('todos', JSON.stringify(prevTodos))
+    const prevTodos = todos.filter(todo => todo.id !== id);
+    if (prevTodos.length === 0) {
+      localStorage.setItem('todos', JSON.stringify(prevTodos));
     }
-    setTodos(prevTodos => prevTodos.filter(todo => todo.id !== id));
+    setTodos(prevTodos);
   };
 
   const filterTodos = (category: string): Todo[] => {
@@ -59,7 +61,7 @@ const useTodos = (): UseTodosReturn => {
   };
 
   useEffect(() => {
-    if (todos?.length > 0) {
+    if (todos.length > 0) {
       localStorage.setItem('todos', JSON.stringify(todos));
     }
   }, [todos]);

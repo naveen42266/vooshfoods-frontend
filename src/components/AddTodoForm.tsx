@@ -17,8 +17,7 @@ interface Todo {
 }
 
 const AddTodoForm: React.FC<AddTodoFormProps> = ({ addTodo, content, handleEmitCancel }) => {
-  // eslint-disable-next-line no-unused-vars
-  const { register, handleSubmit, reset, formState: { errors } } = useForm<{ text: string }>(); //  const { register, handleSubmit, reset, formState: { errors } } = useForm<{ text: string }>();
+  const { register, handleSubmit, reset } = useForm<{ text: string }>(); // Removed `errors`
   const [category, setCategory] = useState<string>('');
   const [dueDate, setDueDate] = useState<string>('');
 
@@ -35,7 +34,7 @@ const AddTodoForm: React.FC<AddTodoFormProps> = ({ addTodo, content, handleEmitC
     setCategory('');
     setDueDate('');
   };
-  console.log(content)
+
   return (
     <form onSubmit={handleSubmit(onSubmit)} className={`space-y-4 bg-white p-2 md:p-4 rounded shadow-md ${content === 'right' && 'h-screen relative'}`}>
       <input
@@ -67,19 +66,6 @@ const AddTodoForm: React.FC<AddTodoFormProps> = ({ addTodo, content, handleEmitC
       >
         Add Todo
       </button>
-      {/* <div className='flex justify-between'>
-        <button
-          className={`w-[49%] py-2 bg-red-600 text-white rounded-md hover:bg-red-500 transition-colors duration-300 ${content === 'right' && 'absolute bottom-0 right-0 left-0 rounded-none'}`}
-          onClick={() => handleEmitCancel(true)}>
-          Cancel
-        </button>
-        <button
-          type="submit"
-          className={`w-[49%] py-2 bg-blue-600 text-white rounded-md hover:bg-blue-500 transition-colors duration-300 ${content === 'right' && 'absolute bottom-0 right-0 left-0 rounded-none'}`}
-        >
-          Add Todo
-        </button>
-      </div> */}
     </form>
   );
 };
