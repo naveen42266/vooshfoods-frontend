@@ -1,4 +1,5 @@
 import React from 'react';
+import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
 
 interface Todo {
     id: string;
@@ -22,12 +23,8 @@ const TodoItem: React.FC<TodoItemProps> = ({ todo, toggleComplete, deleteTodo })
     return (
         <div className="flex items-center justify-between bg-white p-2 md:p-4 rounded shadow-md">
             <div className="flex items-center space-x-4">
-                <input
-                    type="checkbox"
-                    checked={todo.completed}
-                    onChange={() => toggleComplete(todo.id)}
-                    className="form-checkbox"
-                />
+                <DragIndicatorIcon className='text-slate-600' />
+                <input type="checkbox" checked={todo.completed} onChange={() => toggleComplete(todo.id)} className="form-checkbox" />
                 <span className={`ml-2 capitalize ${todo.completed ? 'line-through text-gray-500' : ''}`}>
                     {todo.text}
                     {todo.category && ` (${todo.category})`}

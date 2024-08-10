@@ -6,9 +6,10 @@ import SearchBar from './components/SearchBar';
 import CategoryFilter from './components/CategoryFilter';
 import { ThemeProvider, ThemeContext } from './context/ThemeContext';
 // import { Drawer } from '@mui/material';
-
+import { Draggable } from "react-drag-reorder";
 function App() {
-  const { todos, addTodo, toggleComplete, deleteTodo, filterTodos, searchTodos } = useTodos();
+  const { todos, suffleTodos, addTodo, toggleComplete, deleteTodo, filterTodos, searchTodos } = useTodos();
+  // const [filteredTodos , setFilteredTodos] = useState(todos)
   const { isDarkMode, toggleTheme } = useContext(ThemeContext);
   const [filter, setFilter] = useState<string>('');
   const [search, setSearch] = useState<string>('');
@@ -27,7 +28,10 @@ function App() {
   useEffect(() => {
     setOpen(false)
   }, [todos?.length])
-
+  // useEffect(() => {
+  //   setFilteredTodos(searchTodos(search).filter(todo => filterTodos(filter).includes(todo)));
+  // }, [todos, search, filter]);
+  console.log(filteredTodos)
   return (
     <ThemeProvider>
       <div className={`min-h-screen flex flex-col ${isDarkMode ? 'bg-gray-900 text-black' : 'bg-gray-100 text-gray-900'} transition-colors duration-300`}>
@@ -56,21 +60,35 @@ function App() {
             <AddTodoForm addTodo={addTodo} content='' handleEmitCancel={(value: boolean) => { setOpen(false) }} />
           </div>}
           {!open && <div >
-            {filteredTodos?.length > 0 ? <ul className="space-y-2">
-              {filteredTodos.map(todo => (
-                <li key={todo.id}>
-                  <TodoItem todo={todo} toggleComplete={toggleComplete} deleteTodo={deleteTodo} />
-                </li>
-              ))}
-            </ul> : todos?.length === 0 && <div className='py-10 flex flex-col justify-center items-center gap-4'>
-              <div className={`${isDarkMode && 'text-white'}`}>There is no todo lists.</div>
-              <button className="py-2 bg-blue-600 text-white rounded-md hover:bg-blue-500 transition-colors duration-300 w-32" onClick={() => setOpen(true)}>Add new Task</button>
-            </div>}
+            {filteredTodos?.length > 0 ?
+              // <ul className="space-y-2">
+              //   {filteredTodos.map(todo => (
+              //     <li key={todo.id}>
+              //       <TodoItem todo={todo} toggleComplete={toggleComplete} deleteTodo={deleteTodo} />
+              //     </li>
+              //   ))}
+              // </ul>
+              <Draggable
+                onPosChange={(currentPos, newPos) => {currentPos !== newPos && suffleTodos(currentPos, newPos) }}
+              // keyExtractor={(item: { id: any; }) => item.id}
+              >
+                {/* <ul className="space-y-2"> */}
+                {filteredTodos.map(todo => (
+                  <div key={todo?.id} className="my-2">
+                    <TodoItem todo={todo} toggleComplete={toggleComplete} deleteTodo={deleteTodo} />
+                  </div>
+                ))}
+                {/* </ul> */}
+              </Draggable>
+              : todos?.length === 0 && <div className='py-10 flex flex-col justify-center items-center gap-4'>
+                <div className={`${isDarkMode && 'text-white'}`}>There is no todo lists.</div>
+                <button className="py-2 bg-blue-600 text-white rounded-md hover:bg-blue-500 transition-colors duration-300 w-32" onClick={() => setOpen(true)}>Add new Task</button>
+              </div>}
           </div>}
         </main>
         <footer className='p-4 flex justify-between items-center'>
-         <a href="https://github.com/naveen42266" className='underline cursor-pointer hover:text-blue-500' target="_blank" rel="noopener noreferrer">Naveen V</a>
-         <a href="https://github.com/naveen42266/todoTask2-nowDigitalEasy" className='underline cursor-pointer hover:text-blue-500' target="_blank" rel="noopener noreferrer">GitHub Code</a>
+          <a href="https://github.com/naveen42266" className='underline cursor-pointer hover:text-blue-500' target="_blank" rel="noopener noreferrer">Naveen V</a>
+          <a href="https://github.com/naveen42266/todoTask2-nowDigitalEasy" className='underline cursor-pointer hover:text-blue-500' target="_blank" rel="noopener noreferrer">GitHub Code</a>
         </footer>
       </div>
       {/* <Drawer anchor={width >= 768 ? "right" : "bottom"} open={open} onClose={() => setOpen(false)}>

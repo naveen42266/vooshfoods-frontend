@@ -10,6 +10,7 @@ interface Todo {
 
 interface UseTodosReturn {
   todos: Todo[];
+  suffleTodos: (currentPosition: number, newPosition: number) => void;
   addTodo: (todo: Todo) => void;
   toggleComplete: (id: string) => void;
   deleteTodo: (id: string) => void;
@@ -19,13 +20,20 @@ interface UseTodosReturn {
 
 const useTodos = (): UseTodosReturn => {
   const [todos, setTodos] = useState<Todo[]>([]);
-  
+
   useEffect(() => {
     const storedTodos = localStorage.getItem('todos');
     if (storedTodos) {
       setTodos(JSON.parse(storedTodos));
     }
   }, []);
+
+  const suffleTodos = (currentPosition: number, newPosition: number) => {
+    const updatedTodos = Array.from(todos);
+    const [movedTodo] = updatedTodos.splice(currentPosition, 1);
+    updatedTodos.splice(newPosition, 0, movedTodo);
+    setTodos(updatedTodos);
+  }
 
   const addTodo = (todo: Todo) => {
     setTodos(prevTodos => [...prevTodos, todo]);
@@ -63,6 +71,7 @@ const useTodos = (): UseTodosReturn => {
 
   return {
     todos,
+    suffleTodos,
     addTodo,
     toggleComplete,
     deleteTodo,
