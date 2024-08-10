@@ -15,6 +15,10 @@ interface TodoItemProps {
 }
 
 const TodoItem: React.FC<TodoItemProps> = ({ todo, toggleComplete, deleteTodo }) => {
+    const handleDate = (date: string): string => {
+        const [year, month, day] = date.split('-');
+        return `${day}/${month}/${year}`;
+    }
     return (
         <div className="flex items-center justify-between bg-white p-2 md:p-4 rounded shadow-md">
             <div className="flex items-center space-x-4">
@@ -27,7 +31,7 @@ const TodoItem: React.FC<TodoItemProps> = ({ todo, toggleComplete, deleteTodo })
                 <span className={`ml-2 capitalize ${todo.completed ? 'line-through text-gray-500' : ''}`}>
                     {todo.text}
                     {todo.category && ` (${todo.category})`}
-                    {todo.dueDate && ` - ${todo.dueDate}`}
+                    {todo.dueDate && ` - ${handleDate(todo.dueDate)}`}
                 </span>
             </div>
             <button

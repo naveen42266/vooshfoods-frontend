@@ -68,6 +68,10 @@ function App() {
             </div>}
           </div>}
         </main>
+        <footer className='p-4 flex justify-between items-center'>
+         <a href="https://github.com/naveen42266" className='underline cursor-pointer hover:text-blue-500' target="_blank" rel="noopener noreferrer">Naveen V</a>
+         <a href="https://github.com/naveen42266/todoTask2-nowDigitalEasy" className='underline cursor-pointer hover:text-blue-500' target="_blank" rel="noopener noreferrer">GitHub Code</a>
+        </footer>
       </div>
       {/* <Drawer anchor={width >= 768 ? "right" : "bottom"} open={open} onClose={() => setOpen(false)}>
         <div className="">
