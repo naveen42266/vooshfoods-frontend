@@ -5,7 +5,7 @@ import TodoItem from './components/TodoItem';
 import SearchBar from './components/SearchBar';
 import CategoryFilter from './components/CategoryFilter';
 import { ThemeProvider, ThemeContext } from './context/ThemeContext';
-import { Drawer } from '@mui/material';
+// import { Drawer } from '@mui/material';
 
 function App() {
   const { todos, addTodo, toggleComplete, deleteTodo, filterTodos, searchTodos } = useTodos();
@@ -13,16 +13,16 @@ function App() {
   const [filter, setFilter] = useState<string>('');
   const [search, setSearch] = useState<string>('');
   const [open, setOpen] = useState<boolean>(false);
-  const [width, setWidth] = useState<number>(0)
+  // const [width, setWidth] = useState<number>(0)
   const filteredTodos = searchTodos(search).filter(todo => filterTodos(filter).includes(todo));
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const updateWidth = () => { setWidth(window.innerWidth) };
-      updateWidth();
-      window.addEventListener('resize', updateWidth);
-      return () => window.removeEventListener('resize', updateWidth);
-    }
-  }, [])
+  // useEffect(() => {
+  //   if (typeof window !== 'undefined') {
+  //     const updateWidth = () => { setWidth(window.innerWidth) };
+  //     updateWidth();
+  //     window.addEventListener('resize', updateWidth);
+  //     return () => window.removeEventListener('resize', updateWidth);
+  //   }
+  // }, [])
   useEffect(() => {
     setOpen(false)
   }, [todos?.length])

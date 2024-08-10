@@ -19,8 +19,8 @@ interface UseTodosReturn {
 
 const useTodos = (): UseTodosReturn => {
   const [todos, setTodos] = useState<Todo[]>([]);
-  const [filter, setFilter] = useState<string>('');
-  const [search, setSearch] = useState<string>('');
+  const [filter, setFilter] = useState<string>('');  // eslint-disable-next-line
+  const [search, setSearch] = useState<string>('');  // eslint-disable-next-line
 
   useEffect(() => {
     const storedTodos = localStorage.getItem('todos');
