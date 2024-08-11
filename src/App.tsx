@@ -48,7 +48,7 @@ function App() {
 
   const handleTouchStart = (e: React.TouchEvent<HTMLDivElement>, index: number) => {
     setTouchStartIndex(index);
-    const touch = e.touches[0];
+    // const touch = e.touches[0];
     dragItemRef.current = e.currentTarget;
     if (dragItemRef.current) {
       dragItemRef.current.style.opacity = '0.5';
