@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useState, useContext, useEffect, useRef } from 'react';
 import useTodos from './hooks/useTodos';
 import AddTodoForm from './components/AddTodoForm';
 import TodoItem from './components/TodoItem';
@@ -20,19 +20,17 @@ function App() {
   const [search, setSearch] = useState<string>('');
   const [open, setOpen] = useState<boolean>(false);
   const [draggedItem, setDraggedItem] = useState<Todo | null>(null);
-  const categories = ['work', 'personal', 'shopping', 'education', 'health', 'finance', 'hobbies'];
+  const [touchStartIndex, setTouchStartIndex] = useState<number | null>(null);
+  const dragItemRef = useRef<HTMLDivElement | null>(null); const categories = ['work', 'personal', 'shopping', 'education', 'health', 'finance', 'hobbies'];
   const filteredTodos = searchTodos(search).filter(todo => filterTodos(filter).includes(todo));
 
   const handleDragStart = (e: React.DragEvent<HTMLDivElement>, todo: Todo) => {
     setDraggedItem(todo);
     e.dataTransfer.effectAllowed = 'move';
     e.dataTransfer.setData('text/html', e.currentTarget.outerHTML);
-    const dragImage = e.currentTarget.cloneNode(true) as HTMLDivElement;
-    dragImage.style.position = 'absolute';
-    dragImage.style.top = '-1000px';
-    document.body.appendChild(dragImage);
-    e.dataTransfer.setDragImage(dragImage, 20, 20);
-    setTimeout(() => document.body.removeChild(dragImage), 0);
+    if (e.currentTarget instanceof HTMLElement) {
+      e.dataTransfer.setDragImage(e.currentTarget, 20, 20);
+    }
   };
 
   const handleDragOver = (e: React.DragEvent<HTMLDivElement>, targetTodo: Todo) => {
@@ -46,6 +44,48 @@ function App() {
 
   const handleDragEnd = () => {
     setDraggedItem(null);
+  };
+
+  const handleTouchStart = (e: React.TouchEvent<HTMLDivElement>, index: number) => {
+    setTouchStartIndex(index);
+    const touch = e.touches[0];
+    dragItemRef.current = e.currentTarget;
+    if (dragItemRef.current) {
+      dragItemRef.current.style.opacity = '0.5';
+      dragItemRef.current.style.position = 'relative';
+      dragItemRef.current.style.zIndex = '1000';
+      dragItemRef.current.style.transform = `translate(0px, 0px)`;
+    }
+  };
+
+  const handleTouchMove = (e: React.TouchEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    if (dragItemRef.current && touchStartIndex !== null) {
+      const touch = e.touches[0];
+      const newY = touch.pageY - dragItemRef.current.offsetTop;
+      dragItemRef.current.style.transform = `translate(0px, ${newY}px)`;
+
+      const targetElement = document.elementFromPoint(touch.clientX, touch.clientY) as HTMLElement;
+      const targetTodoItem = targetElement?.closest('li');
+      if (targetTodoItem) {
+        const targetIndex = Array.from(targetTodoItem.parentElement?.children || []).indexOf(targetTodoItem);
+        if (targetIndex !== -1 && targetIndex !== touchStartIndex) {
+          suffleTodos(touchStartIndex, targetIndex);
+          setTouchStartIndex(targetIndex);
+        }
+      }
+    }
+  };
+
+  const handleTouchEnd = () => {
+    if (dragItemRef.current) {
+      dragItemRef.current.style.opacity = '1';
+      dragItemRef.current.style.position = 'static';
+      dragItemRef.current.style.zIndex = 'auto';
+      dragItemRef.current.style.transform = 'none';
+    }
+    setTouchStartIndex(null);
+    dragItemRef.current = null;
   };
 
   useEffect(() => {
@@ -79,13 +119,16 @@ function App() {
           {!open && <div >
             {filteredTodos?.length > 0 ?
               <ul className="space-y-2">
-                {filteredTodos.map((todo) => (
+                {filteredTodos.map((todo, index) => (
                   <li key={todo.id} className="my-2">
                     <div
                       draggable
                       onDragStart={(e) => handleDragStart(e, todo)}
                       onDragOver={(e) => handleDragOver(e, todo)}
                       onDragEnd={handleDragEnd}
+                      onTouchStart={(e) => handleTouchStart(e, index)}
+                      onTouchMove={handleTouchMove}
+                      onTouchEnd={handleTouchEnd}
                       style={{
                         padding: '10px',
                         marginBottom: '5px',
