@@ -5,8 +5,13 @@ import TodoItem from './components/TodoItem';
 import SearchBar from './components/SearchBar';
 import CategoryFilter from './components/CategoryFilter';
 import { ThemeProvider, ThemeContext } from './context/ThemeContext';
-// import { Drawer } from '@mui/material';
-import { Draggable } from "react-drag-reorder";
+interface Todo {
+  id: string;
+  text: string;
+  completed: boolean;
+  category?: string;
+  dueDate?: string;
+}
 function App() {
   const { todos, suffleTodos, addTodo, toggleComplete, deleteTodo, filterTodos, searchTodos } = useTodos();
   // const [filteredTodos , setFilteredTodos] = useState(todos)
@@ -14,24 +19,39 @@ function App() {
   const [filter, setFilter] = useState<string>('');
   const [search, setSearch] = useState<string>('');
   const [open, setOpen] = useState<boolean>(false);
+  const [draggedItem, setDraggedItem] = useState<Todo | null>(null);
   const categories = ['work', 'personal', 'shopping', 'education', 'health', 'finance', 'hobbies'];
-  // const [width, setWidth] = useState<number>(0)
   const filteredTodos = searchTodos(search).filter(todo => filterTodos(filter).includes(todo));
-  // useEffect(() => {
-  //   if (typeof window !== 'undefined') {
-  //     const updateWidth = () => { setWidth(window.innerWidth) };
-  //     updateWidth();
-  //     window.addEventListener('resize', updateWidth);
-  //     return () => window.removeEventListener('resize', updateWidth);
-  //   }
-  // }, [])
+
+  const handleDragStart = (e: React.DragEvent<HTMLDivElement>, todo: Todo) => {
+    setDraggedItem(todo);
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/html', e.currentTarget.outerHTML);
+    const dragImage = e.currentTarget.cloneNode(true) as HTMLDivElement;
+    dragImage.style.position = 'absolute';
+    dragImage.style.top = '-1000px';
+    document.body.appendChild(dragImage);
+    e.dataTransfer.setDragImage(dragImage, 20, 20);
+    setTimeout(() => document.body.removeChild(dragImage), 0);
+  };
+
+  const handleDragOver = (e: React.DragEvent<HTMLDivElement>, targetTodo: Todo) => {
+    e.preventDefault();
+    if (draggedItem && draggedItem !== targetTodo) {
+      const currentPosition = todos.findIndex(todo => todo.id === draggedItem.id);
+      const newPosition = todos.findIndex(todo => todo.id === targetTodo.id);
+      suffleTodos(currentPosition, newPosition);
+    }
+  };
+
+  const handleDragEnd = () => {
+    setDraggedItem(null);
+  };
+
   useEffect(() => {
     setOpen(false)
   }, [todos?.length])
-  // useEffect(() => {
-  //   setFilteredTodos(searchTodos(search).filter(todo => filterTodos(filter).includes(todo)));
-  // }, [todos, search, filter]);
-  console.log(filteredTodos)
+
   return (
     <ThemeProvider>
       <div className={`min-h-screen flex flex-col ${isDarkMode ? 'bg-gray-900 text-black' : 'bg-gray-100 text-gray-900'} transition-colors duration-300`}>
@@ -53,33 +73,32 @@ function App() {
             {!open ? <button className="w-[15%] sm:w-[10%] py-2 bg-blue-600 text-white rounded-md hover:bg-blue-500 transition-colors duration-300 block md:hidden text-xl" onClick={() => setOpen(true)}>+</button> : <button className="w-[15%] sm:w-[10%] py-2 bg-red-600 text-white rounded-md hover:bg-red-500 transition-colors duration-300 block md:hidden text-xl" onClick={() => setOpen(false)}>x</button>}
             {!open ? <button className="w-[10%] py-2 bg-blue-600 text-white rounded-md hover:bg-blue-500 transition-colors duration-300 hidden md:block" onClick={() => setOpen(true)}>Add</button> : <button className="w-[10%] py-2 bg-red-600 text-white rounded-md hover:bg-red-500 transition-colors duration-300 hidden md:block" onClick={() => setOpen(false)}>Close</button>}
           </div>
-          {/* <div className="mb-4">
-            <CategoryFilter categories={['work', 'personal', 'shopping']} onFilter={setFilter} />
-          </div> */}
           {open && <div className="mb-4">
             <AddTodoForm addTodo={addTodo} content='' handleEmitCancel={(value: boolean) => { setOpen(false) }} />
           </div>}
           {!open && <div >
             {filteredTodos?.length > 0 ?
-              // <ul className="space-y-2">
-              //   {filteredTodos.map(todo => (
-              //     <li key={todo.id}>
-              //       <TodoItem todo={todo} toggleComplete={toggleComplete} deleteTodo={deleteTodo} />
-              //     </li>
-              //   ))}
-              // </ul>
-              <Draggable
-                onPosChange={(currentPos, newPos) => {currentPos !== newPos && suffleTodos(currentPos, newPos) }}
-              // keyExtractor={(item: { id: any; }) => item.id}
-              >
-                {/* <ul className="space-y-2"> */}
-                {filteredTodos.map(todo => (
-                  <div key={todo?.id} className="my-2">
-                    <TodoItem todo={todo} toggleComplete={toggleComplete} deleteTodo={deleteTodo} />
-                  </div>
+              <ul className="space-y-2">
+                {filteredTodos.map((todo) => (
+                  <li key={todo.id} className="my-2">
+                    <div
+                      draggable
+                      onDragStart={(e) => handleDragStart(e, todo)}
+                      onDragOver={(e) => handleDragOver(e, todo)}
+                      onDragEnd={handleDragEnd}
+                      style={{
+                        padding: '10px',
+                        marginBottom: '5px',
+                        border: '1px solid #ccc',
+                        backgroundColor: todo === draggedItem ? '#e0e0e0' : 'white',
+                        cursor: 'move',
+                      }}
+                    >
+                      <TodoItem todo={todo} toggleComplete={(id: string) => { toggleComplete(id) }} deleteTodo={(id: string) => { deleteTodo(id) }} />
+                    </div>
+                  </li>
                 ))}
-                {/* </ul> */}
-              </Draggable>
+              </ul>
               : todos?.length === 0 && <div className='py-10 flex flex-col justify-center items-center gap-4'>
                 <div className={`${isDarkMode && 'text-white'}`}>There is no todo lists.</div>
                 <button className="py-2 bg-blue-600 text-white rounded-md hover:bg-blue-500 transition-colors duration-300 w-32" onClick={() => setOpen(true)}>Add new Task</button>
@@ -91,11 +110,6 @@ function App() {
           <a href="https://github.com/naveen42266/todoTask2-nowDigitalEasy" className='underline cursor-pointer hover:text-blue-500' target="_blank" rel="noopener noreferrer">GitHub Code</a>
         </footer>
       </div>
-      {/* <Drawer anchor={width >= 768 ? "right" : "bottom"} open={open} onClose={() => setOpen(false)}>
-        <div className="">
-          <AddTodoForm addTodo={addTodo} content={width >= 768 ? "right" : "bottom"} />
-        </div>
-      </Drawer> */}
     </ThemeProvider>
   );
 }
