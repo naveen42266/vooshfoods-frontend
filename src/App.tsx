@@ -87,9 +87,9 @@ function App() {
                       onDragOver={(e) => handleDragOver(e, todo)}
                       onDragEnd={handleDragEnd}
                       style={{
-                        padding: '10px',
+                        // padding: '10px',
                         marginBottom: '5px',
-                        border: '1px solid #ccc',
+                        // border: '1px solid #ccc',
                         backgroundColor: todo === draggedItem ? '#e0e0e0' : 'white',
                         cursor: 'move',
                       }}

@@ -50,10 +50,6 @@ const AddTodoForm: React.FC<AddTodoFormProps> = ({ addTodo, content, handleEmitC
         className="w-full p-2 border rounded-md capitalize"
       >
         <option value="">Select Category</option>
-        {/* Add options for categories */}
-        {/* <option value="work">Work</option>
-        <option value="personal">Personal</option>
-        <option value="shopping">Shopping</option> */}
         {categories?.map((each) => (
           <option value={each} className='capitalize'>{each}</option>
         ))}
