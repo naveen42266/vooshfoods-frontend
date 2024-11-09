@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: 'https://vooshfoods-backend.onrender.com/api/auth/', // replace with your backend API URL
+  baseURL: 'https://vooshfoods-backend.onrender.com/api/', // replace with your backend API URL
   headers: {
     'Content-Type': 'application/json',
   },
