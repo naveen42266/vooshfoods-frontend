@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // Set up base URL and Axios instance
 const api = axios.create({
-  baseURL: 'http://localhost:8080/api/todoapp/', // replace with your backend API URL
+  baseURL: 'http://localhost:8080/api/todo/', // replace with your backend API URL
   headers: {
     'Content-Type': 'application/json',
   },
@@ -24,7 +24,7 @@ api.interceptors.request.use(
 // Get all notes for the authenticated user
 export const getAllTasks = async () => {
   try {
-    const response = await api.get('/GetNotes');
+    const response = await api.get('/getTasks');
     return response.data;
   } catch (error) {
     console.error("Error fetching notes:", error);
@@ -33,9 +33,16 @@ export const getAllTasks = async () => {
 };
 
 // Add a new note
-export const addTask = async (description: any) => {
+export const addTask = async (taskData: any) => {
   try {
-    const response = await api.post('/AddNotes', { newNotes: description });
+    const response = await api.post('/addTask', {
+      title: taskData.title,
+      description: taskData.description,
+      status: taskData.status,
+      priority: taskData.priority,
+      deadline: taskData.deadline,
+      createdAt: taskData.createdAt,
+    });
     return response.data;
   } catch (error) {
     console.error("Error adding note:", error);
@@ -44,10 +51,17 @@ export const addTask = async (description: any) => {
 };
 
 // Update a note by ID
-export const updateTask = async (noteId: any, updatedDescription: any) => {
+export const updateTask = async (taskId: string, updatedTask: any) => {
   try {
-    const response = await api.put('/UpdateNotes', { updatedNotes: updatedDescription }, {
-      params: { id: noteId }
+    const response = await api.put('/updateTask', {
+      title: updatedTask.title,
+      description: updatedTask.description,
+      status: updatedTask.status,
+      priority: updatedTask.priority,
+      deadline: updatedTask.deadline,
+      updatedAt: updatedTask.updatedAt,  // Send only the updated fields
+    }, {
+      params: { id: taskId }
     });
     return response.data;
   } catch (error) {
@@ -56,11 +70,29 @@ export const updateTask = async (noteId: any, updatedDescription: any) => {
   }
 };
 
-// Delete a note by ID
-export const deleteTask = async (noteId: any) => {
+
+// Update a note by ID
+export const updateStatus = async (taskId: string, status: any) => {
   try {
-    const response = await api.delete('/DeleteNotes', {
-      params: { id: noteId }
+    const response = await api.put('/updateStatus', {
+      status: status,
+    }, {
+      params: { id: taskId }
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error updating status:", error);
+    throw error;
+  }
+};
+
+
+
+// Delete a note by ID
+export const deleteTask = async (taskId: any) => {
+  try {
+    const response = await api.delete('/deleteTask', {
+      params: { id: taskId }
     });
     return response.data;
   } catch (error) {

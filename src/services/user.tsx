@@ -1,8 +1,15 @@
 import axios from "axios";
 
+const api = axios.create({
+  baseURL: 'http://localhost:8080/api/', // replace with your backend API URL
+  headers: {
+    'Content-Type': 'application/json',
+  },
+});
+
 export async function login(email: string, password: string) {
   try {
-    const response = await axios.post("http://localhost:8080/api/auth/login", {
+    const response = await api.post("/auth/login", {
       email,
       password,
     });
@@ -28,7 +35,7 @@ export async function signup(
   gender: string
 ) {
   try {
-    const response = await axios.post("http://localhost:8080/api/auth/signup", {
+    const response = await api.post("/auth/signup", {
       firstName,
       lastName,
       email,
@@ -42,6 +49,24 @@ export async function signup(
   } catch (error: any) {
     if (error.response) {
       console.error("Signup error:", error.response.data.message);
+      return { error: error.response.data.message }; 
+    } else {
+      console.error("Error:", error.message);
+      return { error: "Network or server error. Please try again." }; 
+    }
+  }
+}
+
+export async function googleLoginSignup (credential : any) {
+  try {
+    const response = await api.post("/auth/google", {
+      token : credential
+    });
+    console.log("Login successful:", response.data);
+    return response.data; 
+  } catch (error: any) {
+    if (error.response) {
+      console.error("Login error:", error.response.data.message);
       return { error: error.response.data.message }; 
     } else {
       console.error("Error:", error.message);

@@ -1,19 +1,26 @@
 import { useContext, useState } from "react";
 import { ThemeContext, ThemeProvider } from "../../context/ThemeContext";
 import { Link, useNavigate } from "react-router-dom";
-import { login } from "../../services/user";
+import { googleLoginSignup, login } from "../../services/user";
 import { useUserDetails } from "../../context/userDetails";
+import Header from "../../components/header";
+import { Avatar, Drawer } from "@mui/material";
+import GoogleOAuth from "../../components/googleOAuth";
+import { useGoogleLogin } from '@react-oauth/google';
 
 const SignIn = () => {
     const { isDarkMode, toggleTheme } = useContext(ThemeContext);
     const [formData, setFormData] = useState({ email: "", password: "" });
     const navigate = useNavigate();
     const { user, updateUser } = useUserDetails();
+    const [open, setOpen] = useState<boolean>(false);
 
     const handleInputChange = (e: { target: { name: any; value: any; }; }) => {
         const { name, value } = e.target;
         setFormData({ ...formData, [name]: value });
     };
+
+
 
     console.log(user)
 
@@ -44,26 +51,41 @@ const SignIn = () => {
         }
     };
 
+    const googleLogin = useGoogleLogin({
+        onSuccess: tokenResponse => window.location.href = "http://localhost:8080/api/auth/google",
+            // googleLoginApi(tokenResponse?.access_token),
+        onError: error => console.log(error)
+    });
+
+    const googleLoginApi = async (credential: any) => {
+        console.log(credential,"credential")
+        try {
+            const response = await googleLoginSignup(credential);
+            if (response.message === "Google login successful") {
+                console.log(response.message);
+                updateUser(response.user);
+                localStorage.setItem("loginMessage", response.message);
+                localStorage.setItem("authToken", response.token);
+                const loginTime = Date.now();
+                localStorage.setItem("loginTime", loginTime.toString());
+                navigate("/");
+            } else {
+                console.log("Login failed: No response from server");
+            }
+        } catch (error) {
+            console.error("Login error:", error);
+        }
+
+    }
+
     return (
         <ThemeProvider>
             <div className={`min-h-screen flex flex-col ${isDarkMode ? 'bg-gray-900 text-black' : 'bg-gray-100 text-gray-900'} transition-colors duration-300`}>
-                <header className="p-4 bg-blue-600 text-white shadow-md">
-                    <div className="container mx-auto flex justify-between items-center">
-                        <Link className="text-3xl font-bold" to={"/"}>Todo</Link>
-                        <div className='flex flex-row justify-end gap-4 items-center'>
-                            <button
-                                onClick={toggleTheme}
-                                className={`px-4 py-2 ${!isDarkMode ? "bg-gray-800 text-white hover:bg-gray-100 hover:text-black" : 'bg-white text-black hover:bg-gray-700 hover:text-white'}  rounded transition-colors duration-300`}
-                            >
-                                {isDarkMode ? 'Light' : 'Dark'}
-                            </button>
-                            <Link className='px-3 py-1 text-blue-600 bg-white rounded-md' to={'/signIn'}>Login</Link>
-                            <Link className='px-2 py-1 text-white  rounded-md' to={'/signUp'}>SignUp</Link>
-                        </div>
-                    </div>
+                <header>
+                    <Header toggleTheme={toggleTheme} isDarkMode={isDarkMode} setOpen={() => { setOpen(!open) }} />
                 </header>
                 <main className="flex-1 container mx-auto p-4">
-                    <div className="flex flex-col items-center justify-center h-[500px] bg-gray-100">
+                    <div className={`flex flex-col items-center justify-center h-[500px] `}>
                         <h2 className="text-3xl font-bold text-blue-600 w-full max-w-md mb-4">Login</h2>
                         <div className="w-full max-w-md p-8 space-y-6 bg-white rounded-lg border-2 border-blue-600">
                             <form onSubmit={handleSubmit} className="space-y-4">
@@ -96,10 +118,10 @@ const SignIn = () => {
                                     Login
                                 </button>
                             </form>
-                            <div className="flex flex-row justify-center gap-2">Don't have a account? <div className="text-blue-600">SignUp</div></div>
+                            <div className="flex flex-row justify-center gap-2">Don't have a account? <Link className="text-blue-600" to={'/signUp'}>SignUp</Link></div>
                             <div className="flex flex-row justify-center ">
-                                <div></div>
-                                <span className="flex flex-row gap-1 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400" >Login with <div className="font-semibold">Google</div></span>
+                                {/* <GoogleOAuth/> */}
+                                <span className="flex flex-row gap-1 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400" onClick={() => googleLogin()} >Login with <div className="font-semibold">Google</div></span>
                                 <div></div>
                             </div>
                         </div>
@@ -107,10 +129,46 @@ const SignIn = () => {
 
 
                 </main>
-                <footer className='p-4 flex justify-between items-center'>
-                    <a href="https://github.com/naveen42266" className='underline cursor-pointer hover:text-blue-500' target="_blank" rel="noopener noreferrer">Naveen V</a>
-                    <a href="https://github.com/naveen42266/todoTask2-nowDigitalEasy" className='underline cursor-pointer hover:text-blue-500' target="_blank" rel="noopener noreferrer">GitHub Code</a>
-                </footer>
+                {/* <Drawer open={open} anchor="right" onClose={() => setOpen(false)}>
+                        <div className="px-20 py-4">
+                            {user ? (
+                                <div className="flex flex-col items-center">
+                                    <div className='text-2xl font-medium pb-5'>My Profile</div>
+                                    {user?.gender !== "Male" ? (
+                                        <Avatar src={"https://png.pngtree.com/png-clipart/20200224/original/pngtree-cartoon-color-simple-male-avatar-png-image_5230557.jpg"} sx={{ height: 150, width: 150 }} className='object-cover' alt="Male Avatar" />
+                                    ) : (
+                                        <Avatar src={"https://w7.pngwing.com/pngs/4/736/png-transparent-female-avatar-girl-face-woman-user-flat-classy-users-icon.png"} sx={{ height: 150, width: 150 }} className='object-cover' alt="Female Avatar" />
+                                    )}
+                                    <div className="mt-2 text-lg font-semibold">
+                                        {user?.firstName} {user?.lastName}
+                                    </div>
+                                    <div className="mt-2 text-lg font-semibold">
+                                        {user?.email}
+                                    </div>
+                                    <button
+                                        className="px-3 py-1 mt-3 bg-red-600 hover:bg-red-500 text-white rounded-md"
+                                        onClick={handleLogout}
+                                    >
+                                        Logout
+                                    </button>
+                                </div>
+                            ) : (
+                                <div className="flex flex-col justify-center items-center px-8">
+                                    <div className="mb-2">
+                                        <AccountCircleIcon fontSize="large" />
+                                    </div>
+                                    <div className="flex space-x-4">
+                                        <Link className="px-3 py-1 text-lg font-semibold text-blue-600 rounded-md" to="/signIn">
+                                            Login
+                                        </Link>
+                                        <Link className="px-3 py-1 text-lg font-semibold text-blue-600 rounded-md" to="/signUp">
+                                            Sign Up
+                                        </Link>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                    </Drawer> */}
             </div>
         </ThemeProvider>
     )
