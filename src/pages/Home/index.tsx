@@ -12,7 +12,7 @@ import TaskGrid from '../../components/tasksGrid';
 import ViewTaskModal from '../../components/viewTask';
 import EditTaskModal from '../../components/editTask';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import { Avatar, Drawer } from '@mui/material';
+import { Avatar, Drawer, LinearProgress, linearProgressClasses, styled } from '@mui/material';
 import Header from '../../components/header';
 
 interface Task {
@@ -27,15 +27,14 @@ interface Task {
 }
 
 function Home() {
-    // const [filteredTodos , setFilteredTodos] = useState(todos)
     const { isDarkMode, toggleTheme } = useContext(ThemeContext);
     const [filter, setFilter] = useState<string>('');
     const [search, setSearch] = useState<string>('');
     const [open, setOpen] = useState<boolean>(false);
     const categories = ['title', 'description', 'deadline'];
-    // const filteredTodos = searchTodos(search).filter(todo => filterTodos(filter).includes(todo));
     const { user, updateUser } = useUserDetails();
     const { tasks, setTasks } = useTaskDetails();
+    let taskCompletionPercent = calculateCompletionRate(tasks);
 
 
 
@@ -45,7 +44,6 @@ function Home() {
     const [isViewTaskModal, setIsViewTaskModal] = useState({ id: '', isOpen: false });
     const [isEditTaskModal, setIsEditTaskModal] = useState({ id: '', isOpen: false });
 
-    // const [tasks, setTasks] = useState([]);
 
     const openModal = () => setIsModalOpen(true);
     const closeModal = () => setIsModalOpen(false);
@@ -110,7 +108,6 @@ function Home() {
         }
     };
 
-
     const handleLogout = () => {
         localStorage.removeItem("user");
         localStorage.removeItem("authToken");
@@ -119,9 +116,6 @@ function Home() {
         updateUser(null);
         // navigate("/signIn");  
     };
-
-
-    console.log(filter, "taskstaskstasks", search)
 
     function todoTask() {
         if (!localStorage.getItem("authToken")) return [];
@@ -159,7 +153,33 @@ function Home() {
         }
     }
 
-    console.log(user, "UUUU")
+    const BorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
+        height: 10,
+        borderRadius: 5,
+        [`&.${linearProgressClasses.colorPrimary}`]: {
+            backgroundColor: theme.palette.grey[200],
+            ...theme.applyStyles('dark', {
+                backgroundColor: theme.palette.grey[800],
+            }),
+        },
+        [`& .${linearProgressClasses.bar}`]: {
+            borderRadius: 5,
+            backgroundColor: '#1a90ff',
+            ...theme.applyStyles('dark', {
+                backgroundColor: '#308fe8',
+            }),
+        },
+    }));
+
+    function calculateCompletionRate(tasks: any) {
+        if (tasks.length === 0) return 0; 
+
+        const completedTasks = tasks.filter((task: { status: string; }) => task.status === "done").length;
+        const completionRate = (completedTasks / tasks.length) * 100;
+
+        return completionRate.toFixed(2) as any; 
+    }
+
 
 
     useEffect(() => {
@@ -181,7 +201,6 @@ function Home() {
     }, [])
 
 
-
     return (
         <ThemeProvider>
             <div className={`min-h-screen flex flex-col ${isDarkMode ? 'bg-gray-900 text-black' : 'bg-gray-100 text-gray-900'} transition-colors duration-300`}>
@@ -194,7 +213,29 @@ function Home() {
                             <div className='w-[65%] md:w-[67.5%]'><SearchBar onSearch={setSearch} /></div>
                             <div className='w-[25%] md:w-[27.5%] md:max-w-[20%]'><CategoryFilter categories={categories} onFilter={setFilter} /></div>
                         </div>
-                        <button className="flex flex-row justify-center items-center gap-2 w-full md:w-auto py-2 px-10 mb-4 bg-blue-600 text-white rounded-md hover:bg-blue-500 transition-colors duration-300" onClick={openModal}> <div className='text-2xl'>+</div> Add Task</button>
+                        <div className="flex flex-col items-center space-y-4 mb-6 md:flex-row md:justify-between md:space-y-0 md:space-x-4">
+                            <button
+                                className="flex items-center gap-2 px-6 py-2 w-full md:w-auto bg-blue-600 text-white text-lg rounded-md shadow-md hover:bg-blue-500 transition-colors duration-300"
+                                onClick={openModal}
+                            >
+                                <span className="text-2xl">+</span>
+                                Add Task
+                            </button>
+                            <div className="w-full md:w-5/6">
+                                <div className="flex flex-col md:flex-row justify-between items-center space-y-2 md:space-y-0 md:space-x-4">
+                                    <div className="mb-1 font-semibold text-gray-700 text-lg">
+                                        Progress: <span className="text-blue-600">{taskCompletionPercent}%</span>
+                                    </div>
+                                    <div className="text-sm text-gray-500">
+                                        <span className="font-medium">Note:</span> Done / (Todo + In Progress + Done) * 100
+                                    </div>
+                                </div>
+                                <BorderLinearProgress variant="determinate" value={taskCompletionPercent} className="mt-2" />
+                            </div>
+                        </div>
+
+
+
                         <TaskGrid tasks={todoTask()} deleteTask={(id: string) => { handleDeleteTask(id); }} editTaskModel={(id: string) => { setIsEditTaskModal({ id: id, isOpen: true }); }} viewTaskModal={(id: string) => { setIsViewTaskModal({ id: id, isOpen: true }); }} updateTaskStatus={(taskId: string, newStatus: string) => { handleEditStatus(taskId, newStatus) }} />
                         <TaskModal isOpen={isModalOpen} onClose={closeModal} onSave={handleSaveTask} />
                         <ViewTaskModal isOpen={isViewTaskModal?.isOpen} id={isViewTaskModal?.id} onClose={viewTaskClose} />
@@ -232,33 +273,33 @@ function Home() {
                     <div className="px-5 py-4">
                         {user ? (
                             <div className="flex flex-col items-center p-6 space-y-4">
-                            <h2 className="text-2xl font-bold text-gray-800 mb-3">My Profile</h2>
-                            
-                            <Avatar 
-                                src={user?.gender == "Male" 
-                                    ? "https://png.pngtree.com/png-clipart/20200224/original/pngtree-cartoon-color-simple-male-avatar-png-image_5230557.jpg" 
-                                    : "https://w7.pngwing.com/pngs/4/736/png-transparent-female-avatar-girl-face-woman-user-flat-classy-users-icon.png"} 
-                                sx={{ height: 120, width: 120 }} 
-                                className="object-cover mb-4 shadow-md" 
-                                alt={`${user?.gender} Avatar`}
-                            />
-                            
-                            <div className="text-center space-y-1">
-                                <div className="text-xl font-semibold text-gray-900">
-                                    {user?.firstName} {user?.lastName}
+                                <h2 className="text-2xl font-bold text-gray-800 mb-3">My Profile</h2>
+
+                                <Avatar
+                                    src={user?.gender == "Male"
+                                        ? "https://png.pngtree.com/png-clipart/20200224/original/pngtree-cartoon-color-simple-male-avatar-png-image_5230557.jpg"
+                                        : "https://w7.pngwing.com/pngs/4/736/png-transparent-female-avatar-girl-face-woman-user-flat-classy-users-icon.png"}
+                                    sx={{ height: 120, width: 120 }}
+                                    className="object-cover mb-4 shadow-md"
+                                    alt={`${user?.gender} Avatar`}
+                                />
+
+                                <div className="text-center space-y-1">
+                                    <div className="text-xl font-semibold text-gray-900">
+                                        {user?.firstName} {user?.lastName}
+                                    </div>
+                                    <div className="text-gray-600">{user?.email}</div>
+                                    <div className="text-gray-600 capitalize">{user?.gender}</div>
                                 </div>
-                                <div className="text-gray-600">{user?.email}</div>
-                                <div className="text-gray-600 capitalize">{user?.gender}</div>
+
+                                <button
+                                    className="mt-5 px-4 py-2 bg-red-600 text-white rounded-lg font-medium shadow hover:bg-red-500 transition-colors duration-300"
+                                    onClick={handleLogout}
+                                >
+                                    Logout
+                                </button>
                             </div>
-                            
-                            <button
-                                className="mt-5 px-4 py-2 bg-red-600 text-white rounded-lg font-medium shadow hover:bg-red-500 transition-colors duration-300"
-                                onClick={handleLogout}
-                            >
-                                Logout
-                            </button>
-                        </div>
-                        
+
                         ) : (
                             <div className="flex flex-col justify-center items-center px-8">
                                 <div className='text-2xl font-medium pb-5'>No User found</div>
