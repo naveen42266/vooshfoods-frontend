@@ -66,6 +66,7 @@ const TaskGrid: React.FC<TaskGridProps> = ({ tasks, deleteTask, editTaskModel, v
                                         </Tooltip>) : ''} </div>
                             </div>
                             <div className="text-base pb-10 capitalize">{task.description}</div>
+                            <div className="text-base font-medium text-red-500">{"Deadline at: " + new Date(task?.deadline).toLocaleString()}</div>
                             <div className="text-sm">{task?.updatedAt ? (<>Updated at: {new Date(task.updatedAt).toLocaleString()}</>) : (<>Created at: {new Date(task.createdAt).toLocaleString()}</>)}</div>
                             <div className="flex flex-row justify-end gap-2 pt-3 text-sm">
                                 <button className="px-3 py-1 text-white bg-red-600 rounded-md" onClick={() => deleteTask(task.id)}>Delete</button>
