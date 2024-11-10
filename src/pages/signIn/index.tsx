@@ -8,6 +8,7 @@ import { Avatar, Drawer } from "@mui/material";
 import GoogleOAuth from "../../components/googleOAuth";
 import { useGoogleLogin } from '@react-oauth/google';
 
+
 const SignIn = () => {
     const { isDarkMode, toggleTheme } = useContext(ThemeContext);
     const [formData, setFormData] = useState({ email: "", password: "" });
@@ -53,12 +54,12 @@ const SignIn = () => {
 
     const googleLogin = useGoogleLogin({
         onSuccess: tokenResponse => window.location.href = "http://localhost:8080/api/auth/google",
-            // googleLoginApi(tokenResponse?.access_token),
+        // googleLoginApi(tokenResponse?.access_token),
         onError: error => console.log(error)
     });
 
     const googleLoginApi = async (credential: any) => {
-        console.log(credential,"credential")
+        console.log(credential, "credential")
         try {
             const response = await googleLoginSignup(credential);
             if (response.message === "Google login successful") {

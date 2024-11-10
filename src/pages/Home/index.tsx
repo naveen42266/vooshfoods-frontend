@@ -14,6 +14,8 @@ import EditTaskModal from '../../components/editTask';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { Avatar, Drawer, LinearProgress, linearProgressClasses, styled } from '@mui/material';
 import Header from '../../components/header';
+import { Bounce, toast, ToastContainer } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 
 interface Task {
     id: string;
@@ -57,11 +59,38 @@ function Home() {
                 console.log(response.message);
                 setIsModalOpen(!isModalOpen)
                 getAllTasksApi();
+                toast.success('Task Added successfully', {
+                    position: "top-right",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                });
             } else {
-                console.log("Login failed: No response from server");
+                console.log(response.message);
+                toast.error(response.message, {
+                    position: "top-right",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                });
             }
         } catch (error) {
-            console.error("Login error:", error);
+            console.error("handleSaveTask error:", error);
+            toast.error("Task Creatation failed", {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+            });
         }
     };
 
@@ -72,11 +101,38 @@ function Home() {
                 console.log(response.message);
                 editTaskClose();
                 getAllTasksApi();
+                toast.success('Task Updated successfully', {
+                    position: "top-right",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                });
             } else {
-                console.log("Login failed: No response from server");
+                console.log("handleEditTask");
+                toast.error(response.message, {
+                    position: "top-right",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                });
             }
         } catch (error) {
-            console.error("Login error:", error);
+            console.error("handleEditTask error:", error);
+            toast.error("Task Updatation failed", {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+            });
         }
     };
 
@@ -86,11 +142,38 @@ function Home() {
             if (response.message === 'Updated Status Successfully') {
                 console.log(response.message);
                 getAllTasksApi();
+                toast.success('Task Status Updated successfully', {
+                    position: "top-right",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                });
             } else {
-                console.log("No response from server");
+                console.log("handleEditStatus");
+                toast.error(response.message, {
+                    position: "top-right",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                });
             }
         } catch (error) {
             console.error("Updatation error:", error);
+            toast.error("Task Status Updatation failed", {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+            });
         }
     };
 
@@ -100,11 +183,38 @@ function Home() {
             if (response === 'Deleted Successfully') {
                 console.log(response.message);
                 getAllTasksApi();
+                toast.success('Task Deleted successfully', {
+                    position: "top-right",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                });
             } else {
-                console.log("Login failed: No response from server");
+                console.log("handleDeleteTask");
+                toast.error(response.message, {
+                    position: "top-right",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                });
             }
         } catch (error) {
-            console.error("Login error:", error);
+            console.error("handleDeleteTask error:", error);
+            toast.error("Task Deteletion failed", {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+            });
         }
     };
 
@@ -114,7 +224,17 @@ function Home() {
         localStorage.removeItem("loginMessage");
         localStorage.removeItem("loginTime");
         updateUser(null);
-        // navigate("/signIn");  
+        // navigate("/signIn"); 
+        setOpen(false)
+        toast.success('User logged out successfully', {
+            position: "top-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+        });
     };
 
     function todoTask() {
@@ -180,6 +300,24 @@ function Home() {
         return completionRate.toFixed(2) as any;
     }
 
+    useEffect(() => {
+        // debugger
+        const loginMessage = localStorage.getItem("loginMessage");
+        if (loginMessage) {
+            toast.success('User logged in successfully', {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+            });
+            // localStorage.removeItem("loginMessage");
+        }
+    }, []); 
+    
+
 
 
     useEffect(() => {
@@ -203,6 +341,7 @@ function Home() {
 
     return (
         <ThemeProvider>
+            <ToastContainer />
             <div className={`min-h-screen flex flex-col ${isDarkMode ? 'bg-gray-900 text-black' : 'bg-gray-100 text-gray-900'} transition-colors duration-300`}>
                 <header>
                     <Header toggleTheme={toggleTheme} isDarkMode={isDarkMode} setOpen={() => { setOpen(!open) }} />
