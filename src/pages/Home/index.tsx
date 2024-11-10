@@ -303,7 +303,7 @@ function Home() {
     useEffect(() => {
         // debugger
         const loginMessage = localStorage.getItem("loginMessage");
-        if (loginMessage) {
+        if (loginMessage == 'Login successful') {
             toast.success('User logged in successfully', {
                 position: "top-right",
                 autoClose: 5000,
@@ -315,8 +315,8 @@ function Home() {
             });
             localStorage.removeItem("loginMessage");
         }
-    }, []); 
-    
+    }, []);
+
 
 
 
