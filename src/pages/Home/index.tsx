@@ -24,8 +24,8 @@ interface Task {
     deadline: string;
     createdAt: string;
     // add other properties here
-  }
-  
+}
+
 function Home() {
     // const [filteredTodos , setFilteredTodos] = useState(todos)
     const { isDarkMode, toggleTheme } = useContext(ThemeContext);
@@ -121,29 +121,29 @@ function Home() {
     };
 
 
-    console.log(filter, "taskstaskstasks",search)
+    console.log(filter, "taskstaskstasks", search)
 
-   function todoTask() {
-    if (!localStorage.getItem("authToken")) return [];
-     if(filter || search){
-         return tasks.filter((task) => {
-            if (filter === 'title') {
-                return task[filter]?.toLowerCase().includes(search.toLowerCase());
-            } else  if (filter === 'description') {
-                return task[filter]?.toLowerCase().includes(search.toLowerCase());
-            }else  if (filter === 'deadline') {
-                // return task[filter]?.toLowerCase().includes(search.toLowerCase());
-            }
-            else {
-                // Filter by all categories
-                // return categories.some((category) =>
-                //     task[category]?.toLowerCase().includes(search.toLowerCase())
-                // );
-            }
-        });
-     }
-     return tasks;
-}
+    function todoTask() {
+        if (!localStorage.getItem("authToken")) return [];
+        if (filter || search) {
+            return tasks.filter((task) => {
+                if (filter === 'title') {
+                    return task[filter]?.toLowerCase().includes(search.toLowerCase());
+                } else if (filter === 'description') {
+                    return task[filter]?.toLowerCase().includes(search.toLowerCase());
+                } else if (filter === 'deadline') {
+                    // return task[filter]?.toLowerCase().includes(search.toLowerCase());
+                }
+                else {
+                    // Filter by all categories
+                    // return categories.some((category) =>
+                    //     task[category]?.toLowerCase().includes(search.toLowerCase())
+                    // );
+                }
+            });
+        }
+        return tasks;
+    }
 
     async function getAllTasksApi() {
         try {
@@ -188,57 +188,105 @@ function Home() {
                 <header>
                     <Header toggleTheme={toggleTheme} isDarkMode={isDarkMode} setOpen={() => { setOpen(!open) }} />
                 </header>
-                <main className="container mx-auto p-4 overflow-y-auto flex-1">
-                    <div className="bg-white p-2 md:p-4 rounded shadow-md mb-4 flex justify-between gap-4">
-                        <div className='w-[65%] md:w-[67.5%]'><SearchBar onSearch={setSearch} /></div>
-                        <div className='w-[25%] md:w-[27.5%] md:max-w-[20%]'><CategoryFilter categories={categories} onFilter={setFilter} /></div>
-                    </div>
-                    <button className="flex flex-row justify-center items-center gap-2 w-full md:w-auto py-2 px-10 mb-4 bg-blue-600 text-white rounded-md hover:bg-blue-500 transition-colors duration-300" onClick={openModal}> <div className='text-2xl'>+</div> Add Task</button>
-                    <TaskGrid tasks={todoTask()} deleteTask={(id: string) => { handleDeleteTask(id); }} editTaskModel={(id: string) => { setIsEditTaskModal({ id: id, isOpen: true }); }} viewTaskModal={(id: string) => { setIsViewTaskModal({ id: id, isOpen: true }); }} updateTaskStatus={(taskId: string, newStatus: string) => { handleEditStatus(taskId, newStatus) }} />
-                    <TaskModal isOpen={isModalOpen} onClose={closeModal} onSave={handleSaveTask} />
-                    <ViewTaskModal isOpen={isViewTaskModal?.isOpen} id={isViewTaskModal?.id} onClose={viewTaskClose} />
-                    <EditTaskModal isOpen={isEditTaskModal?.isOpen} id={isEditTaskModal?.id} onClose={editTaskClose} onSave={handleEditTask} />
-                    <Drawer open={open} anchor="right" onClose={() => setOpen(false)}>
-                        <div className="px-20 py-4">
-                            {user ? (
-                                <div className="flex flex-col items-center">
-                                    <div className='text-2xl font-medium pb-5'>My Profile</div>
-                                    {user?.gender === "Male" ? (
-                                        <Avatar src={"https://png.pngtree.com/png-clipart/20200224/original/pngtree-cartoon-color-simple-male-avatar-png-image_5230557.jpg"} sx={{ height: 150, width: 150 }} className='object-cover' alt="Male Avatar" />
-                                    ) : (
-                                        <Avatar src={"https://w7.pngwing.com/pngs/4/736/png-transparent-female-avatar-girl-face-woman-user-flat-classy-users-icon.png"} sx={{ height: 150, width: 150 }} className='object-cover' alt="Female Avatar" />
-                                    )}
-                                    <div className="mt-2 text-lg font-semibold">
-                                        {user?.firstName} {user?.lastName}
-                                    </div>
-                                    <div className="mt-2 text-lg font-semibold">
-                                        {user?.email}
-                                    </div>
-                                    <button
-                                        className="px-3 py-1 mt-3 bg-red-600 hover:bg-red-500 text-white rounded-md"
-                                        onClick={handleLogout}
-                                    >
-                                        Logout
-                                    </button>
-                                </div>
-                            ) : (
-                                <div className="flex flex-col justify-center items-center px-8">
-                                    <div className="mb-2">
-                                        <AccountCircleIcon fontSize="large" />
-                                    </div>
-                                    <div className="flex space-x-4">
-                                        <Link className="px-3 py-1 text-lg font-semibold text-blue-600 rounded-md" to="/signIn">
-                                            Login
-                                        </Link>
-                                        <Link className="px-3 py-1 text-lg font-semibold text-blue-600 rounded-md" to="/signUp">
-                                            Sign Up
-                                        </Link>
-                                    </div>
-                                </div>
-                            )}
+                {user ? (
+                    <main className="container mx-auto p-4 overflow-y-auto flex-1">
+                        <div className="bg-white p-2 md:p-4 rounded shadow-md mb-4 flex justify-between gap-4">
+                            <div className='w-[65%] md:w-[67.5%]'><SearchBar onSearch={setSearch} /></div>
+                            <div className='w-[25%] md:w-[27.5%] md:max-w-[20%]'><CategoryFilter categories={categories} onFilter={setFilter} /></div>
                         </div>
-                    </Drawer>
-                </main>
+                        <button className="flex flex-row justify-center items-center gap-2 w-full md:w-auto py-2 px-10 mb-4 bg-blue-600 text-white rounded-md hover:bg-blue-500 transition-colors duration-300" onClick={openModal}> <div className='text-2xl'>+</div> Add Task</button>
+                        <TaskGrid tasks={todoTask()} deleteTask={(id: string) => { handleDeleteTask(id); }} editTaskModel={(id: string) => { setIsEditTaskModal({ id: id, isOpen: true }); }} viewTaskModal={(id: string) => { setIsViewTaskModal({ id: id, isOpen: true }); }} updateTaskStatus={(taskId: string, newStatus: string) => { handleEditStatus(taskId, newStatus) }} />
+                        <TaskModal isOpen={isModalOpen} onClose={closeModal} onSave={handleSaveTask} />
+                        <ViewTaskModal isOpen={isViewTaskModal?.isOpen} id={isViewTaskModal?.id} onClose={viewTaskClose} />
+                        <EditTaskModal isOpen={isEditTaskModal?.isOpen} id={isEditTaskModal?.id} onClose={editTaskClose} onSave={handleEditTask} />
+                    </main>) :
+                    <main className='flex flex-col justify-center items-center space-y-6 p-10'>
+                        <div className={`text-3xl font-semibold ${isDarkMode ? 'text-white' : 'text-gray-800'} mb-4`}>
+                            No User Found
+                        </div>
+
+                        <p className={`text-lg ${isDarkMode ? 'text-gray-300' : 'text-gray-600'} text-center max-w-md`}>
+                            It seems you’re not logged in. If you already have an account, please log in below. Otherwise, create a new account to get started.
+                        </p>
+
+                        <div className="flex flex-col items-center space-y-4">
+                            <Link
+                                className="px-6 py-2 text-lg font-semibold text-blue-600 rounded-md bg-blue-100 hover:bg-blue-200 transition-colors duration-300"
+                                to="/signIn"
+                            >
+                                Login
+                            </Link>
+
+                            <span className="text-lg font-medium text-gray-500">or</span>
+
+                            <Link
+                                className="px-6 py-2 text-lg font-semibold text-white bg-blue-600 rounded-md hover:bg-blue-500 transition-colors duration-300"
+                                to="/signUp"
+                            >
+                                Sign Up
+                            </Link>
+                        </div>
+                    </main>
+                }
+                <Drawer open={open} anchor="right" onClose={() => setOpen(false)}>
+                    <div className="px-5 py-4">
+                        {user ? (
+                            <div className="flex flex-col items-center p-6 space-y-4">
+                            <h2 className="text-2xl font-bold text-gray-800 mb-3">My Profile</h2>
+                            
+                            <Avatar 
+                                src={user?.gender == "Male" 
+                                    ? "https://png.pngtree.com/png-clipart/20200224/original/pngtree-cartoon-color-simple-male-avatar-png-image_5230557.jpg" 
+                                    : "https://w7.pngwing.com/pngs/4/736/png-transparent-female-avatar-girl-face-woman-user-flat-classy-users-icon.png"} 
+                                sx={{ height: 120, width: 120 }} 
+                                className="object-cover mb-4 shadow-md" 
+                                alt={`${user?.gender} Avatar`}
+                            />
+                            
+                            <div className="text-center space-y-1">
+                                <div className="text-xl font-semibold text-gray-900">
+                                    {user?.firstName} {user?.lastName}
+                                </div>
+                                <div className="text-gray-600">{user?.email}</div>
+                                <div className="text-gray-600 capitalize">{user?.gender}</div>
+                            </div>
+                            
+                            <button
+                                className="mt-5 px-4 py-2 bg-red-600 text-white rounded-lg font-medium shadow hover:bg-red-500 transition-colors duration-300"
+                                onClick={handleLogout}
+                            >
+                                Logout
+                            </button>
+                        </div>
+                        
+                        ) : (
+                            <div className="flex flex-col justify-center items-center px-8">
+                                <div className='text-2xl font-medium pb-5'>No User found</div>
+                                <img src="https://img.freepik.com/premium-vector/flat-design-no-user-found_108061-1605.jpg" className='max-h-[300px] max-w-[300px]' alt="no user found" />
+                                <p className={`text-lg text-center max-w-md mb-4`}>
+                                    It seems you’re not logged in. If you already have an account, please log in below. Otherwise, create a new account to get started.
+                                </p>
+                                <div className="flex flex-col items-center space-y-4">
+                                    <Link
+                                        className="px-6 py-2 text-lg font-semibold text-blue-600 rounded-md bg-blue-100 hover:bg-blue-200 transition-colors duration-300"
+                                        to="/signIn"
+                                    >
+                                        Login
+                                    </Link>
+
+                                    <span className="text-lg font-medium text-gray-500">or</span>
+
+                                    <Link
+                                        className="px-6 py-2 text-lg font-semibold text-white bg-blue-600 rounded-md hover:bg-blue-500 transition-colors duration-300"
+                                        to="/signUp"
+                                    >
+                                        Sign Up
+                                    </Link>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                </Drawer>
             </div>
         </ThemeProvider>
     );
