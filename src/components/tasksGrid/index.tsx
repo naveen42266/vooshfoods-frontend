@@ -1,14 +1,16 @@
 import React, { useState } from 'react';
+import StarIcon from '@mui/icons-material/Star';
+import Tooltip from '@mui/material/Tooltip';
 
 interface TaskGridProps {
-    tasks:Array<any>
+    tasks: Array<any>
     deleteTask: (id: string) => void;
     editTaskModel: (id: string) => void;
     viewTaskModal: (id: string) => void;
     updateTaskStatus: (taskId: string, newStatus: string) => void;
 }
 
-const TaskGrid: React.FC<TaskGridProps> = ({tasks, deleteTask, editTaskModel, viewTaskModal, updateTaskStatus }) => {
+const TaskGrid: React.FC<TaskGridProps> = ({ tasks, deleteTask, editTaskModel, viewTaskModal, updateTaskStatus }) => {
     const [draggedItem, setDraggedItem] = useState<string | null>(null);
 
     const handleDragStart = (e: React.DragEvent, taskId: string) => {
@@ -55,9 +57,16 @@ const TaskGrid: React.FC<TaskGridProps> = ({tasks, deleteTask, editTaskModel, vi
                             }}
                             className={`${bgColor} p-2 md:p-4 rounded shadow-md mb-4`}
                         >
-                            <div className="text-base font-bold capitalize">{task.title}</div>
+                            <div className='flex flex-row justify-between items-center'>
+                                <div className="text-base font-bold capitalize">{task.title}</div>
+                                <div>
+                                    {task.priority === 'High' ? (
+                                        <Tooltip title="High Priority" arrow>
+                                            <StarIcon className='text-red-500' />
+                                        </Tooltip>) : ''} </div>
+                            </div>
                             <div className="text-base pb-10 capitalize">{task.description}</div>
-                            <div className="text-sm">Created at: {new Date(task.createdAt).toLocaleString()}</div>
+                            <div className="text-sm">{task?.updatedAt ? (<>Updated at: {new Date(task.updatedAt).toLocaleString()}</>) : (<>Created at: {new Date(task.createdAt).toLocaleString()}</>)}</div>
                             <div className="flex flex-row justify-end gap-2 pt-3 text-sm">
                                 <button className="px-3 py-1 text-white bg-red-600 rounded-md" onClick={() => deleteTask(task.id)}>Delete</button>
                                 <button className="px-3 py-1 text-white bg-blue-400 rounded-md" onClick={() => editTaskModel(task.id)}>Edit</button>

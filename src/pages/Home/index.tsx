@@ -172,12 +172,12 @@ function Home() {
     }));
 
     function calculateCompletionRate(tasks: any) {
-        if (tasks.length === 0) return 0; 
+        if (tasks.length === 0) return 0;
 
         const completedTasks = tasks.filter((task: { status: string; }) => task.status === "done").length;
         const completionRate = (completedTasks / tasks.length) * 100;
 
-        return completionRate.toFixed(2) as any; 
+        return completionRate.toFixed(2) as any;
     }
 
 
@@ -233,9 +233,6 @@ function Home() {
                                 <BorderLinearProgress variant="determinate" value={taskCompletionPercent} className="mt-2" />
                             </div>
                         </div>
-
-
-
                         <TaskGrid tasks={todoTask()} deleteTask={(id: string) => { handleDeleteTask(id); }} editTaskModel={(id: string) => { setIsEditTaskModal({ id: id, isOpen: true }); }} viewTaskModal={(id: string) => { setIsViewTaskModal({ id: id, isOpen: true }); }} updateTaskStatus={(taskId: string, newStatus: string) => { handleEditStatus(taskId, newStatus) }} />
                         <TaskModal isOpen={isModalOpen} onClose={closeModal} onSave={handleSaveTask} />
                         <ViewTaskModal isOpen={isViewTaskModal?.isOpen} id={isViewTaskModal?.id} onClose={viewTaskClose} />
@@ -245,11 +242,9 @@ function Home() {
                         <div className={`text-3xl font-semibold ${isDarkMode ? 'text-white' : 'text-gray-800'} mb-4`}>
                             No User Found
                         </div>
-
                         <p className={`text-lg ${isDarkMode ? 'text-gray-300' : 'text-gray-600'} text-center max-w-md`}>
                             It seems you’re not logged in. If you already have an account, please log in below. Otherwise, create a new account to get started.
                         </p>
-
                         <div className="flex flex-col items-center space-y-4">
                             <Link
                                 className="px-6 py-2 text-lg font-semibold text-blue-600 rounded-md bg-blue-100 hover:bg-blue-200 transition-colors duration-300"
@@ -257,9 +252,7 @@ function Home() {
                             >
                                 Login
                             </Link>
-
                             <span className="text-lg font-medium text-gray-500">or</span>
-
                             <Link
                                 className="px-6 py-2 text-lg font-semibold text-white bg-blue-600 rounded-md hover:bg-blue-500 transition-colors duration-300"
                                 to="/signUp"
