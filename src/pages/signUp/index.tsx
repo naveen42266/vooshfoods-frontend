@@ -5,6 +5,8 @@ import { googleLoginSignup, signup } from "../../services/user";
 import Header from "../../components/header";
 import { useGoogleLogin } from "@react-oauth/google";
 import { useUserDetails } from "../../context/userDetails";
+import { Bounce, toast, ToastContainer } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 
 const SignUp = () => {
     const { isDarkMode, toggleTheme } = useContext(ThemeContext);
@@ -25,14 +27,24 @@ const SignUp = () => {
         e.preventDefault();
         try {
             const response = await signup(formData.firstName, formData.lastName, formData?.email, formData?.password, formData?.confirmPassword, formData?.gender);
-            if (response) {
+            if (response.message == 'Signup successful') {
                 console.log(response.message);
+                localStorage.setItem("signUpMessage", response.message);
                 navigate("/signIn");
             } else {
                 console.log("Login failed: No response from server");
             }
         } catch (error) {
             console.error("Login error:", error);
+            toast.error('Signed Up Error', {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+            });
         }
     };
 
@@ -64,6 +76,7 @@ const SignUp = () => {
       
     return (
         <ThemeProvider>
+            <ToastContainer/>
             <div className={`min-h-screen flex flex-col ${isDarkMode ? 'bg-gray-900 text-black' : 'bg-gray-100 text-gray-900'} transition-colors duration-300`}>
                 <header>
                     <Header toggleTheme={toggleTheme} isDarkMode={isDarkMode} setOpen={() => { setOpen(!open) }} />

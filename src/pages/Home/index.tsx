@@ -313,7 +313,7 @@ function Home() {
                 draggable: true,
                 progress: undefined,
             });
-            // localStorage.removeItem("loginMessage");
+            localStorage.removeItem("loginMessage");
         }
     }, []); 
     

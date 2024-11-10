@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { ThemeContext, ThemeProvider } from "../../context/ThemeContext";
 import { Link, useNavigate } from "react-router-dom";
 import { googleLoginSignup, login } from "../../services/user";
@@ -7,7 +7,8 @@ import Header from "../../components/header";
 import { Avatar, Drawer } from "@mui/material";
 import GoogleOAuth from "../../components/googleOAuth";
 import { useGoogleLogin } from '@react-oauth/google';
-
+import { Bounce, toast, ToastContainer } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 
 const SignIn = () => {
     const { isDarkMode, toggleTheme } = useContext(ThemeContext);
@@ -79,8 +80,26 @@ const SignIn = () => {
 
     }
 
+    useEffect(() => {
+        // debugger
+        const signUpMessage = localStorage.getItem("signUpMessage");
+        if (signUpMessage) {
+            toast.success('Signed Up successfully', {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+            });
+            localStorage.removeItem("signUpMessage");
+        }
+    }, []);
+
     return (
         <ThemeProvider>
+            <ToastContainer />
             <div className={`min-h-screen flex flex-col ${isDarkMode ? 'bg-gray-900 text-black' : 'bg-gray-100 text-gray-900'} transition-colors duration-300`}>
                 <header>
                     <Header toggleTheme={toggleTheme} isDarkMode={isDarkMode} setOpen={() => { setOpen(!open) }} />
