@@ -46,10 +46,28 @@ const SignIn = () => {
                 localStorage.setItem("loginTime", loginTime.toString());
                 navigate("/");
             } else {
-                console.log("Login failed: No response from server");
+                console.log("Login failed:" + response.error);
+                toast.error(response.error, {
+                    position: "top-right",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                });
             }
-        } catch (error) {
+        } catch (error: any) {
             console.error("Login error:", error);
+            toast.error(error, {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+            });
         }
     };
 

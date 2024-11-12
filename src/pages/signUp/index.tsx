@@ -32,11 +32,20 @@ const SignUp = () => {
                 localStorage.setItem("signUpMessage", response.message);
                 navigate("/signIn");
             } else {
-                console.log("Login failed: No response from server");
+                console.log("SignUp failed: No response from server",response.error);
+                toast.error(response.error, {
+                    position: "top-right",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                });
             }
-        } catch (error) {
-            console.error("Login error:", error);
-            toast.error('Signed Up Error', {
+        } catch (error: any) {
+            console.error("SignUp error:", error);
+            toast.error(error, {
                 position: "top-right",
                 autoClose: 5000,
                 hideProgressBar: false,

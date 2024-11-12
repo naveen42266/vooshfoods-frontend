@@ -18,11 +18,11 @@ export async function login(email: string, password: string) {
     return response.data; 
   } catch (error: any) {
     if (error.response) {
-      console.error("Login error:", error.response.data.message);
-      return { error: error.response.data.message }; 
+      console.error("Login error:", error.response.data.error);
+      return { error: error.response.data.error }; 
     } else {
       console.error("Error:", error.message);
-      return { error: "Network or server error. Please try again." }; 
+      return { error: error.message }; 
     }
   }
 }
@@ -49,11 +49,11 @@ export async function signup(
     return response.data; 
   } catch (error: any) {
     if (error.response) {
-      console.error("Signup error:", error.response.data.message);
-      return { error: error.response.data.message }; 
+      console.error("Signup error:", error.response.data.error);
+      return { error: error.response.data.error }; 
     } else {
       console.error("Error:", error.message);
-      return { error: "Network or server error. Please try again." }; 
+      return { error: error.message }; 
     }
   }
 }
