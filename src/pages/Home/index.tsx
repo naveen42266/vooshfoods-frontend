@@ -2,7 +2,7 @@ import React, { useState, useContext, useEffect } from 'react';
 import { ThemeContext, ThemeProvider, } from '../../context/ThemeContext';
 import SearchBar from '../../components/SearchBar';
 import CategoryFilter from '../../components/CategoryFilter';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useUserDetails } from "../../context/userDetails";
 import { jwtDecode } from 'jwt-decode'; // Correct way for newer versions
 import { addTask, deleteTask, getAllTasks, updateStatus, updateTask } from '../../services/tasks';
@@ -33,18 +33,17 @@ function Home() {
     const [filter, setFilter] = useState<string>('');
     const [search, setSearch] = useState<string>('');
     const [open, setOpen] = useState<boolean>(false);
-    const categories = ['title', 'description', 'deadline'];
     const { user, updateUser } = useUserDetails();
     const { tasks, setTasks } = useTaskDetails();
-    let taskCompletionPercent = calculateCompletionRate(tasks);
-
-
-
-    const navigate = useNavigate();
-
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isViewTaskModal, setIsViewTaskModal] = useState({ id: '', isOpen: false });
     const [isEditTaskModal, setIsEditTaskModal] = useState({ id: '', isOpen: false });
+    const navigate = useNavigate();
+    const location = useLocation();
+    const queryParams = new URLSearchParams(location.search);
+    const token = queryParams.get('token');
+    let taskCompletionPercent = calculateCompletionRate(tasks);
+    const categories = ['title', 'description', 'deadline'];
 
 
     const openModal = () => setIsModalOpen(true);
@@ -300,10 +299,17 @@ function Home() {
         return completionRate.toFixed(2) as any;
     }
 
+
     useEffect(() => {
-        // debugger
-        const loginMessage = localStorage.getItem("loginMessage");
-        if (loginMessage == 'Login successful') {
+        if (token) {
+            const decoded: any = jwtDecode(token);
+            const userData: any = {};
+            userData.userId = decoded.id;
+            userData.email =  decoded.email;
+            userData.firstName = decoded.firstName;
+            userData.lastName =  decoded.lastName;
+            userData.profilePicture = decoded.profilePicture;
+            updateUser(userData);
             toast.success('User logged in successfully', {
                 position: "top-right",
                 autoClose: 5000,
@@ -313,12 +319,11 @@ function Home() {
                 draggable: true,
                 progress: undefined,
             });
-            localStorage.removeItem("loginMessage");
+            localStorage.setItem("authToken", token);
+            navigate("/", { replace: true });
         }
-    }, []);
 
-
-
+    }, [token])
 
     useEffect(() => {
         const token = localStorage.getItem('authToken');
@@ -335,6 +340,19 @@ function Home() {
             else {
                 getAllTasksApi();
             }
+        }
+        const loginMessage = localStorage.getItem("loginMessage");
+        if (loginMessage) {
+            toast.success('User logged in successfully', {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+            });
+            localStorage.removeItem("loginMessage");
         }
     }, [])
 
@@ -354,7 +372,7 @@ function Home() {
                         </div>
                         <div className="flex flex-col items-center space-y-4 mb-6 md:flex-row md:justify-between md:space-y-0 md:space-x-4">
                             <button
-                                className="flex items-center gap-2 px-6 py-2 w-full md:w-auto bg-blue-600 text-white text-lg rounded-md shadow-md hover:bg-blue-500 transition-colors duration-300"
+                                className="flex flex-row justify-center items-center gap-2 px-6 py-2 w-full md:w-auto bg-blue-600 text-white text-lg rounded-md shadow-md hover:bg-blue-500 transition-colors duration-300"
                                 onClick={openModal}
                             >
                                 <span className="text-2xl">+</span>
@@ -410,7 +428,7 @@ function Home() {
                                 <Avatar
                                     src={user?.gender == "Male"
                                         ? "https://png.pngtree.com/png-clipart/20200224/original/pngtree-cartoon-color-simple-male-avatar-png-image_5230557.jpg"
-                                        : "https://w7.pngwing.com/pngs/4/736/png-transparent-female-avatar-girl-face-woman-user-flat-classy-users-icon.png"}
+                                        : user?.gender == "Female" ? "https://w7.pngwing.com/pngs/4/736/png-transparent-female-avatar-girl-face-woman-user-flat-classy-users-icon.png" : user?.profilePicture ? user?.profilePicture :''}
                                     sx={{ height: 120, width: 120 }}
                                     className="object-cover mb-4 shadow-md"
                                     alt={`${user?.gender} Avatar`}

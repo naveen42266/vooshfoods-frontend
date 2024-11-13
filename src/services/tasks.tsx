@@ -3,7 +3,7 @@ import axios from 'axios';
 // Set up base URL and Axios instance
 const api = axios.create({
   baseURL: 'https://vooshfoods-backend.onrender.com/api/todo/', // replace with your backend API URL
-  // baseURL: 'https://localhost:8080/api/todo/', // replace with your backend API URL
+  // baseURL: 'http://localhost:8080/api/todo/', // replace with your backend API URL
   headers: {
     'Content-Type': 'application/json',
   },
