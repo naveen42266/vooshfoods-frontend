@@ -9,6 +9,7 @@ import GoogleOAuth from "../../components/googleOAuth";
 import { useGoogleLogin } from '@react-oauth/google';
 import { Bounce, toast, ToastContainer } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
+import { PropagateLoader } from "react-spinners";
 
 const SignIn = () => {
     const { isDarkMode, toggleTheme } = useContext(ThemeContext);
@@ -16,6 +17,7 @@ const SignIn = () => {
     const navigate = useNavigate();
     const { user, updateUser } = useUserDetails();
     const [open, setOpen] = useState<boolean>(false);
+    const [inProgress, setInProgress] = useState(false)
 
     const handleInputChange = (e: { target: { name: any; value: any; }; }) => {
         const { name, value } = e.target;
@@ -34,6 +36,7 @@ const SignIn = () => {
     // }
 
     const handleSubmit = async (e: React.FormEvent) => {
+        setInProgress(true)
         e.preventDefault();
         try {
             const response = await login(formData.email, formData.password);
@@ -68,6 +71,8 @@ const SignIn = () => {
                 draggable: true,
                 progress: undefined,
             });
+        } finally {
+            setInProgress(false);
         }
     };
 
@@ -150,12 +155,19 @@ const SignIn = () => {
                                         required
                                     />
                                 </div>
-                                <button
-                                    type="submit"
-                                    className="w-full px-4 py-2 font-semibold text-white bg-blue-500 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
-                                >
-                                    Login
-                                </button>
+                                {inProgress ?
+                                    <button
+                                        disabled
+                                        className="w-full px-4 py-2 font-semibold text-white bg-blue-500 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                                    >
+                                        <PropagateLoader className="pb-3" color="white" />
+                                    </button> :
+                                    <button
+                                        type="submit"
+                                        className="w-full px-4 py-2 font-semibold text-white bg-blue-500 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                                    >
+                                        Login
+                                    </button>}
                             </form>
                             <div className="flex flex-row justify-center gap-2">Don't have a account? <Link className="text-blue-600" to={'/signUp'}>SignUp</Link></div>
                             <div className="flex flex-row justify-center ">

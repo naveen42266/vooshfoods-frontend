@@ -7,11 +7,13 @@ import { useGoogleLogin } from "@react-oauth/google";
 import { useUserDetails } from "../../context/userDetails";
 import { Bounce, toast, ToastContainer } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
+import { PropagateLoader } from "react-spinners";
 
 const SignUp = () => {
     const { isDarkMode, toggleTheme } = useContext(ThemeContext);
     const [formData, setFormData] = useState({ firstName: "", lastName: "", email: "", gender: "", password: "", confirmPassword: "" });
     const [open, setOpen] = useState<boolean>(false);
+    const [inProgress, setInProgress] = useState(false)
     const { user, updateUser } = useUserDetails();
     const navigate = useNavigate();
 
@@ -24,6 +26,7 @@ const SignUp = () => {
 
 
     const handleSubmit = async (e: { preventDefault: () => void; }) => {
+        setInProgress(true)
         e.preventDefault();
         try {
             const response = await signup(formData.firstName, formData.lastName, formData?.email, formData?.password, formData?.confirmPassword, formData?.gender);
@@ -32,7 +35,7 @@ const SignUp = () => {
                 localStorage.setItem("signUpMessage", response.message);
                 navigate("/signIn");
             } else {
-                console.log("SignUp failed: No response from server",response.error);
+                console.log("SignUp failed: No response from server", response.error);
                 toast.error(response.error, {
                     position: "top-right",
                     autoClose: 5000,
@@ -54,10 +57,12 @@ const SignUp = () => {
                 draggable: true,
                 progress: undefined,
             });
+        } finally {
+            setInProgress(false);
         }
     };
 
-    
+
     const googleLogin = useGoogleLogin({
         onSuccess: tokenResponse => window.location.href = "https://vooshfoods-backend.onrender.com/api/auth/google",
         // "http://localhost:8080/api/auth/google",
@@ -84,15 +89,15 @@ const SignUp = () => {
         }
 
     }
-      
+
     return (
         <ThemeProvider>
-            <ToastContainer/>
-            <div className={`min-h-screen flex flex-col ${isDarkMode ? 'bg-gray-900 text-black' : 'bg-gray-100 text-gray-900'} transition-colors duration-300`}>
-                <header>
+            <ToastContainer />
+            <div className={`flex flex-col ${isDarkMode ? 'bg-gray-900 text-black' : 'bg-gray-100 text-gray-900'} transition-colors duration-300`}>
+                <header className="sticky top-0 right-0 left-0">
                     <Header toggleTheme={toggleTheme} isDarkMode={isDarkMode} setOpen={() => { setOpen(!open) }} />
                 </header>
-                <main className="flex-1 container mx-auto p-4">
+                <main className="flex-1 container mx-auto p-4 overflow-y-scroll hidden-scrollbar">
                     <div className={`flex flex-col items-center justify-center min-h-screen `}>
                         <h2 className="text-3xl font-bold text-blue-600 w-full max-w-md mb-4">Sign Up</h2>
                         <div className="w-full max-w-md p-8 space-y-6 bg-white rounded-lg border-2 border-blue-600">
@@ -190,17 +195,25 @@ const SignUp = () => {
                                         </label>
                                     </div>
                                 </div>
-                                <button
-                                    type="submit"
-                                    className="w-full px-4 py-2 font-semibold text-white bg-blue-500 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
-                                >
-                                    Sign Up
-                                </button>
+                                {inProgress ?
+                                    <button
+                                        disabled
+                                        className="w-full px-4 py-2 font-semibold text-white bg-blue-500 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                                    >
+                                        <PropagateLoader className="pb-3" color="white" />
+                                    </button> :
+                                    <button
+                                        type="submit"
+                                        className="w-full px-4 py-2 font-semibold text-white bg-blue-500 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                                    >
+                                        Sign Up
+                                    </button>
+                                }
                             </form>
                             <div className="flex flex-row justify-center gap-2">Already have a account? <Link className="text-blue-600" to={"/signIn"}>Login</Link></div>
                             <div className="flex flex-row justify-center ">
                                 <div></div>
-                                <span className="flex flex-row gap-1 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400" onClick={()=>googleLogin()}>SignUp with <div className="font-semibold">Google</div></span>
+                                <span className="flex flex-row gap-1 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400" onClick={() => googleLogin()}>SignUp with <div className="font-semibold">Google</div></span>
                                 <div></div>
                             </div>
                         </div>

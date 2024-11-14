@@ -28,6 +28,8 @@ interface Task {
     // add other properties here
 }
 
+type TaskKey = keyof Task;
+
 function Home() {
     const { isDarkMode, toggleTheme } = useContext(ThemeContext);
     const [filter, setFilter] = useState<string>('');
@@ -238,23 +240,23 @@ function Home() {
 
     function todoTask() {
         if (!localStorage.getItem("authToken")) return [];
+
         if (filter || search) {
-            return tasks.filter((task) => {
-                if (filter === 'title') {
-                    return task[filter]?.toLowerCase().includes(search.toLowerCase());
-                } else if (filter === 'description') {
-                    return task[filter]?.toLowerCase().includes(search.toLowerCase());
+            return tasks.filter((task: Task) => {
+                if (filter === 'title' || filter === 'description') {
+                    return (task[filter as TaskKey] as string)?.toLowerCase().includes(search.toLowerCase());
                 } else if (filter === 'deadline') {
-                    // return task[filter]?.toLowerCase().includes(search.toLowerCase());
-                }
-                else {
+                    console.log(task.deadline, " deadline", search)
+                    return (task["deadline"] as string)?.toLowerCase().includes(search);
+                } else {
                     // Filter by all categories
-                    // return categories.some((category) =>
-                    //     task[category]?.toLowerCase().includes(search.toLowerCase())
-                    // );
+                    return (categories as TaskKey[]).some((category) =>
+                        (task[category] as string)?.toLowerCase().includes(search.toLowerCase())
+                    );
                 }
             });
         }
+
         return tasks;
     }
 
@@ -276,14 +278,14 @@ function Home() {
         height: 10,
         borderRadius: 5,
         [`&.${linearProgressClasses.colorPrimary}`]: {
-            backgroundColor: theme.palette.grey[200],
+            backgroundColor: theme.palette.grey[400],
             ...theme.applyStyles('dark', {
                 backgroundColor: theme.palette.grey[800],
             }),
         },
         [`& .${linearProgressClasses.bar}`]: {
             borderRadius: 5,
-            backgroundColor: '#1a90ff',
+            backgroundColor: taskCompletionPercent > 49.9 ? '#16a34a' : '#dc2626',
             ...theme.applyStyles('dark', {
                 backgroundColor: '#308fe8',
             }),
@@ -305,9 +307,9 @@ function Home() {
             const decoded: any = jwtDecode(token);
             const userData: any = {};
             userData.userId = decoded.id;
-            userData.email =  decoded.email;
+            userData.email = decoded.email;
             userData.firstName = decoded.firstName;
-            userData.lastName =  decoded.lastName;
+            userData.lastName = decoded.lastName;
             userData.profilePicture = decoded.profilePicture;
             updateUser(userData);
             toast.success('User logged in successfully', {
@@ -360,19 +362,28 @@ function Home() {
     return (
         <ThemeProvider>
             <ToastContainer />
-            <div className={`min-h-screen flex flex-col ${isDarkMode ? 'bg-gray-900 text-black' : 'bg-gray-100 text-gray-900'} transition-colors duration-300`}>
-                <header>
+            <div className={`min-h-screen flex flex-col ${isDarkMode ? 'bg-gray-900 text-black' : 'bg-gray-100 text-gray-900'} transition-colors duration-300 hidden-scrollbar`}>
+                <header className='sticky top-0 left-0 right-0 z-10'>
                     <Header toggleTheme={toggleTheme} isDarkMode={isDarkMode} setOpen={() => { setOpen(!open) }} />
                 </header>
+                <main className='overflow-y-scroll hidden-scrollbar'>
                 {user ? (
                     <main className="container mx-auto p-4 overflow-y-auto flex-1">
                         <div className="bg-white p-2 md:p-4 rounded shadow-md mb-4 flex justify-between gap-4">
-                            <div className='w-[65%] md:w-[67.5%]'><SearchBar onSearch={setSearch} /></div>
-                            <div className='w-[25%] md:w-[27.5%] md:max-w-[20%]'><CategoryFilter categories={categories} onFilter={setFilter} /></div>
+                            {filter === 'deadline' ? <div className='w-[65%] md:w-[67.5%]'>
+                                <input
+                                    type="date"
+                                    name="deadline"
+                                    value={search}
+                                    onChange={(e) => setSearch(e?.target?.value)}
+                                    className="w-full p-2 border rounded-md"
+                                />
+                            </div> : <div className='w-[65%] md:w-[67.5%]'><SearchBar onSearch={setSearch} /></div>}
+                            <div className='w-[25%] md:w-[27.5%] md:max-w-[20%]'><CategoryFilter categories={categories} onFilter={(filter) => { setFilter(filter); setSearch('') }} /></div>
                         </div>
                         <div className="flex flex-col items-center space-y-4 mb-6 md:flex-row md:justify-between md:space-y-0 md:space-x-4">
                             <button
-                                className="flex flex-row justify-center items-center gap-2 px-6 py-2 w-full md:w-auto bg-blue-600 text-white text-lg rounded-md shadow-md hover:bg-blue-500 transition-colors duration-300"
+                                className="flex flex-row justify-center items-center gap-2 px-6 py-2 w-full md:w-auto bg-blue-600 text-white text-lg font-bold rounded-md shadow-md hover:bg-blue-500 transition-colors duration-300"
                                 onClick={openModal}
                             >
                                 <span className="text-2xl">+</span>
@@ -380,10 +391,10 @@ function Home() {
                             </button>
                             <div className="w-full md:w-5/6">
                                 <div className="flex flex-col md:flex-row justify-between items-center space-y-2 md:space-y-0 md:space-x-4">
-                                    <div className="mb-1 font-semibold text-gray-700 text-lg">
-                                        Progress: <span className="text-blue-600">{taskCompletionPercent}%</span>
+                                    <div className={`mb-1 font-semibold ${isDarkMode ? "text-white" : 'text-gray-700'}  text-lg`}>
+                                        Progress: <span className={`${taskCompletionPercent > 49.9 ? 'text-[#16a34a]' : 'text-[#dc2626]'}`}>{taskCompletionPercent}%</span> done
                                     </div>
-                                    <div className="text-sm text-gray-500">
+                                    <div className={`text-sm ${isDarkMode ? "text-white" : 'text-gray-500'}`}>
                                         <span className="font-medium">Note:</span> Done / (Todo + In Progress + Done) * 100
                                     </div>
                                 </div>
@@ -419,6 +430,7 @@ function Home() {
                         </div>
                     </main>
                 }
+                </main>
                 <Drawer open={open} anchor="right" onClose={() => setOpen(false)}>
                     <div className="px-5 py-4">
                         {user ? (
@@ -428,7 +440,7 @@ function Home() {
                                 <Avatar
                                     src={user?.gender == "Male"
                                         ? "https://png.pngtree.com/png-clipart/20200224/original/pngtree-cartoon-color-simple-male-avatar-png-image_5230557.jpg"
-                                        : user?.gender == "Female" ? "https://w7.pngwing.com/pngs/4/736/png-transparent-female-avatar-girl-face-woman-user-flat-classy-users-icon.png" : user?.profilePicture ? user?.profilePicture :''}
+                                        : user?.gender == "Female" ? "https://w7.pngwing.com/pngs/4/736/png-transparent-female-avatar-girl-face-woman-user-flat-classy-users-icon.png" : user?.profilePicture ? user?.profilePicture : ''}
                                     sx={{ height: 120, width: 120 }}
                                     className="object-cover mb-4 shadow-md"
                                     alt={`${user?.gender} Avatar`}
