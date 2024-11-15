@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useTaskDetails } from '../../context/taskDetails';
+import { ScaleLoader } from 'react-spinners';
 
 interface EditTaskModalProps {
     isOpen?: boolean;
@@ -23,6 +24,7 @@ interface Task {
 const EditTaskModal: React.FC<EditTaskModalProps> = ({ isOpen, id, onClose, onSave }) => {
     const { tasks } = useTaskDetails();
     const [task, setTask] = useState<Task | null>(null);
+    const [inProgress, setInProgress] = useState(false)
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
@@ -30,14 +32,26 @@ const EditTaskModal: React.FC<EditTaskModalProps> = ({ isOpen, id, onClose, onSa
     };
 
     const handleSave = () => {
+        setInProgress(true)
         if (task) {
             const updatedTask = {
                 ...task,
-                updatedAt:  new Date().toISOString(),
+                updatedAt: new Date().toISOString(),
             };
             if (onSave) onSave(updatedTask);
+            setInterval(() => {
+                setInProgress(false);
+            }, 3000);
         }
     };
+
+    const isChanges = () => {
+        const before = tasks?.find((each) => each?.id === id) ?? null;
+        if ((before?.title !== task?.title && task?.title !== '') || before?.description !== task?.description || before?.deadline !== task?.deadline || before?.priority !== task?.priority) {
+            return true;
+        }
+        return false
+    }
 
     useEffect(() => {
         const currentTask = tasks?.find((each) => each?.id === id) ?? null;
@@ -100,16 +114,24 @@ const EditTaskModal: React.FC<EditTaskModalProps> = ({ isOpen, id, onClose, onSa
                 <div className="flex justify-end space-x-2">
                     <button
                         onClick={onClose}
-                        className="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400"
+                        className="px-4 py-2 bg-gray-300 hover:bg-gray-400 text-gray-700 rounded-md"
                     >
                         Close
                     </button>
-                    <button
-                        onClick={handleSave}
-                        className="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600"
-                    >
-                        Update Task
-                    </button>
+                    {inProgress ?
+                        <button
+                            disabled
+                            className="px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-md"
+                        >
+                            <ScaleLoader height={17} width={6} className="" color="white" />
+                        </button> :
+                        <button
+                            onClick={() => { if (isChanges()) { handleSave(); } }}
+                            className={`px-4 py-2 ${isChanges() ? "bg-green-500 hover:bg-green-600 text-white" : "bg-gray-300 hover:bg-gray-400 text-gray-700"} rounded-md`}
+                        >
+                            Update
+                        </button>
+                    }
                 </div>
             </div>
         </div>

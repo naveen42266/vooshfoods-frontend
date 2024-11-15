@@ -246,7 +246,6 @@ function Home() {
                 if (filter === 'title' || filter === 'description') {
                     return (task[filter as TaskKey] as string)?.toLowerCase().includes(search.toLowerCase());
                 } else if (filter === 'deadline') {
-                    console.log(task.deadline, " deadline", search)
                     return (task["deadline"] as string)?.toLowerCase().includes(search);
                 } else {
                     // Filter by all categories
@@ -264,7 +263,6 @@ function Home() {
         try {
             const response = await getAllTasks();
             if (response) {
-                console.log(response);
                 setTasks(response)
             } else {
                 console.log("Login failed: No response from server");
@@ -332,7 +330,6 @@ function Home() {
         if (token) {
             const decoded: any = jwtDecode(token);
             const currentTime = Date.now() / 1000;
-            console.log(token)
             if (decoded.exp < currentTime) {
                 localStorage.removeItem("user");
                 localStorage.removeItem("authToken");
@@ -398,7 +395,7 @@ function Home() {
                                         <span className="font-medium">Note:</span> Done / (Todo + In Progress + Done) * 100
                                     </div>
                                 </div>
-                                <BorderLinearProgress variant="determinate" value={taskCompletionPercent} className="mt-2" />
+                                <BorderLinearProgress variant="determinate" value={Number(taskCompletionPercent)} className="mt-2" />
                             </div>
                         </div>
                         <TaskGrid tasks={todoTask()} deleteTask={(id: string) => { handleDeleteTask(id); }} editTaskModel={(id: string) => { setIsEditTaskModal({ id: id, isOpen: true }); }} viewTaskModal={(id: string) => { setIsViewTaskModal({ id: id, isOpen: true }); }} updateTaskStatus={(taskId: string, newStatus: string) => { handleEditStatus(taskId, newStatus) }} />
@@ -432,10 +429,10 @@ function Home() {
                 }
                 </main>
                 <Drawer open={open} anchor="right" onClose={() => setOpen(false)}>
-                    <div className="px-5 py-4">
+                    <div className={`px-5 py-4 h-screen ${isDarkMode ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-900'} transition-colors duration-300`}>
                         {user ? (
                             <div className="flex flex-col items-center p-6 space-y-4">
-                                <h2 className="text-2xl font-bold text-gray-800 mb-3">My Profile</h2>
+                                <h2 className="text-2xl font-bold mb-3">My Profile</h2>
 
                                 <Avatar
                                     src={user?.gender == "Male"
@@ -447,11 +444,11 @@ function Home() {
                                 />
 
                                 <div className="text-center space-y-1">
-                                    <div className="text-xl font-semibold text-gray-900">
+                                    <div className="text-xl font-semibold">
                                         {user?.firstName} {user?.lastName}
                                     </div>
-                                    <div className="text-gray-600">{user?.email}</div>
-                                    <div className="text-gray-600 capitalize">{user?.gender}</div>
+                                    <div className={`${isDarkMode ? "text-gray-300" : "text-gray-600"}`}>{user?.email}</div>
+                                    <div className={`${isDarkMode ? "text-gray-300" : "text-gray-600"} capitalize`}>{user?.gender}</div>
                                 </div>
 
                                 <button

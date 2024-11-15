@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import StarIcon from '@mui/icons-material/Star';
 import Tooltip from '@mui/material/Tooltip';
-// import { Modal }  from '@mui/material/Modal/Modal';
 import { Dialog } from '@mui/material';
 import KeyboardDoubleArrowLeftIcon from '@mui/icons-material/KeyboardDoubleArrowLeft';
 import KeyboardDoubleArrowRightIcon from '@mui/icons-material/KeyboardDoubleArrowRight';
@@ -15,11 +14,15 @@ interface TaskGridProps {
 
 const TaskGrid: React.FC<TaskGridProps> = ({ tasks, deleteTask, editTaskModel, viewTaskModal, updateTaskStatus }) => {
     const [draggedItem, setDraggedItem] = useState<string>('');
+    const [id, setId] = useState<string>('');
     const [open, setOpen] = React.useState(false);
+    const [openDelete, setOpenDelete] = React.useState(false);
     const [status, setStatus] = React.useState('');
     const [statusChange, setStatusChange] = React.useState('');
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
+    const handleOpenDelete = () => setOpenDelete(true);
+    const handleCloseDelete = () => setOpenDelete(false);
 
     const handleDragStart = (e: React.DragEvent, taskId: string) => {
         setDraggedItem(taskId);
@@ -72,11 +75,11 @@ const TaskGrid: React.FC<TaskGridProps> = ({ tasks, deleteTask, editTaskModel, v
                             onDragStart={(e) => handleDragStart(e, task.id)}
                             style={{
                                 // marginBottom: '5px',
-                                backgroundColor: draggedItem === task.id ? '#e0e0e0' : '',
+                                // backgroundColor: draggedItem === task.id ? '#e0e0e0' : '',
                                 cursor: 'move',
                             }}
                             className={`${bgColor} p-2 md:p-4 rounded shadow-md mb-4`}
-                            onClick={() => {  }}
+                            onClick={() => { }}
                         >
                             <div className='flex flex-row justify-between items-center'>
                                 <div className="text-base font-bold capitalize">{task.title}</div>
@@ -85,7 +88,7 @@ const TaskGrid: React.FC<TaskGridProps> = ({ tasks, deleteTask, editTaskModel, v
                                         <Tooltip title="High Priority" arrow>
                                             <StarIcon className='text-red-500' />
                                         </Tooltip>) : ''}
-                                    <div onClick={() => { handleOpen(); setDraggedItem(task?.id); setStatus(task?.status); setStatusChange('');}}>
+                                    <div onClick={() => { handleOpen(); setDraggedItem(task?.id); setStatus(task?.status); setStatusChange(''); }}>
                                         {status.toLowerCase() === 'todo' ? (
                                             <div>
                                                 <KeyboardDoubleArrowRightIcon />
@@ -104,12 +107,12 @@ const TaskGrid: React.FC<TaskGridProps> = ({ tasks, deleteTask, editTaskModel, v
                                 </div>
                             </div>
                             <div className="text-base pb-10 capitalize">{task.description}</div>
-                            <div className="text-base font-medium text-red-500">{"Deadline at: " + new Date(task?.deadline).toLocaleString()}</div>
+                            <div className="text-base font-medium text-red-500">{ task?.deadline && "Deadline at: " + new Date(task?.deadline).toLocaleString()}</div>
                             <div className="text-sm">{task?.updatedAt ? (<>Updated at: {new Date(task.updatedAt).toLocaleString()}</>) : (<>Created at: {new Date(task.createdAt).toLocaleString()}</>)}</div>
                             <div className="flex flex-row justify-end gap-2 pt-3 text-sm" onClick={() => { setOpen(false) }}>
-                                <button className="px-3 py-1 text-white bg-red-600 rounded-md" onClick={() => { deleteTask(task?.id); handleClose(); }}>Delete</button>
+                                <button className="px-3 py-1 text-white bg-red-600 rounded-md" onClick={() => { handleOpenDelete(); setId(task?.id) }}>Delete</button>
                                 <button className="px-3 py-1 text-white bg-blue-400 rounded-md" onClick={() => { editTaskModel(task?.id); handleClose(); }}>Edit</button>
-                                <button className="px-3 py-1 text-white bg-blue-600 rounded-md" onClick={() => { viewTaskModal(task?.id); handleClose(); }}>View Details</button>
+                                <button className="px-3 py-1 text-white bg-blue-600 rounded-md" onClick={() => { viewTaskModal(task?.id); handleClose(); }}>View</button>
                             </div>
                         </div>
                     ))}
@@ -156,6 +159,32 @@ const TaskGrid: React.FC<TaskGridProps> = ({ tasks, deleteTask, editTaskModel, v
                             className={`px-4 py-1 md:py-2 ${status === statusChange || statusChange === "" ? 'bg-gray-300 hover:bg-gray-400 text-gray-700' : 'bg-green-500 hover:bg-green-600 text-white '}  rounded-md text-xs sm:text-sm`}
                         >
                             Save
+                        </button>
+                    </div>
+                </div>
+            </Dialog>
+            <Dialog
+                open={openDelete}
+                onClose={handleCloseDelete}
+                aria-labelledby="modal-modal-title"
+                aria-describedby="modal-modal-description"
+                fullWidth
+                maxWidth={window.innerWidth >= 768 ? "sm" : 'lg'}
+            >
+                <div className='p-3'>
+                    <div className='py-2'>Are you sure going to Delete this task <span className='text-red-600 capitalize'>{tasks?.find((ele) => ele.id === id)?.title}</span> </div>
+                    <div className="flex justify-end space-x-2 ">
+                        <button
+                            onClick={() => { handleCloseDelete(); }}
+                            className="px-4 py-1 md:py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400 text-xs sm:text-sm"
+                        >
+                            No
+                        </button>
+                        <button
+                            onClick={() => { deleteTask(id); handleCloseDelete(); }}
+                            className={`px-4 py-1 md:py-2 bg-green-500 hover:bg-green-600 text-white  rounded-md text-xs sm:text-sm`}
+                        >
+                            Yes
                         </button>
                     </div>
                 </div>
