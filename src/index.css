@@ -2,6 +2,11 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+  body {
+    @apply font-sans antialiased text-gray-900 bg-gray-50;
+  }
+}
 
 .hidden-scrollbar {
     scrollbar-width: none; 
@@ -10,4 +15,12 @@
 
 .hidden-scrollbar::-webkit-scrollbar {
     display: none; 
+}
+
+/* Glassmorphism utilities */
+.glass {
+  @apply bg-white/70 backdrop-blur-md border border-white/20 shadow-sm;
+}
+.glass-dark {
+  @apply bg-gray-900/70 backdrop-blur-md border border-gray-800/50 shadow-sm;
 }

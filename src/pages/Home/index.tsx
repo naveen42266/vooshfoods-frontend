@@ -9,9 +9,13 @@ import { addTask, deleteTask, getAllTasks, updateStatus, updateTask } from '../.
 import TaskModal from '../../components/addTask';
 import { useTaskDetails } from '../../context/taskDetails';
 import TaskGrid from '../../components/tasksGrid';
+import TaskList from '../../components/taskList';
 import ViewTaskModal from '../../components/viewTask';
 import EditTaskModal from '../../components/editTask';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import AssignmentIcon from '@mui/icons-material/Assignment';
+import ViewListIcon from '@mui/icons-material/ViewList';
+import ViewColumnIcon from '@mui/icons-material/ViewColumn';
 import { Avatar, Drawer, LinearProgress, linearProgressClasses, styled } from '@mui/material';
 import Header from '../../components/header';
 import { Bounce, toast, ToastContainer } from "react-toastify";
@@ -35,6 +39,7 @@ function Home() {
     const [filter, setFilter] = useState<string>('');
     const [search, setSearch] = useState<string>('');
     const [open, setOpen] = useState<boolean>(false);
+    const [viewMode, setViewMode] = useState<'list' | 'board'>('list');
     const { user, updateUser } = useUserDetails();
     const { tasks, setTasks } = useTaskDetails();
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -273,20 +278,15 @@ function Home() {
     }
 
     const BorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
-        height: 10,
-        borderRadius: 5,
+        height: 12,
+        borderRadius: 6,
         [`&.${linearProgressClasses.colorPrimary}`]: {
-            backgroundColor: theme.palette.grey[400],
-            ...theme.applyStyles('dark', {
-                backgroundColor: theme.palette.grey[800],
-            }),
+            backgroundColor: isDarkMode ? '#374151' : '#E5E7EB',
         },
         [`& .${linearProgressClasses.bar}`]: {
-            borderRadius: 5,
-            backgroundColor: taskCompletionPercent > 49.9 ? '#16a34a' : '#dc2626',
-            ...theme.applyStyles('dark', {
-                backgroundColor: '#308fe8',
-            }),
+            borderRadius: 6,
+            backgroundColor: taskCompletionPercent > 49.9 ? '#10B981' : '#F43F5E',
+            transition: 'transform .4s ease-in-out',
         },
     }));
 
@@ -364,69 +364,125 @@ function Home() {
                     <Header toggleTheme={toggleTheme} isDarkMode={isDarkMode} setOpen={() => { setOpen(!open) }} />
                 </header>
                 <main className='overflow-y-scroll hidden-scrollbar'>
-                {user ? (
-                    <main className="container mx-auto p-4 overflow-y-auto flex-1">
-                        <div className="bg-white p-2 md:p-4 rounded shadow-md mb-4 flex justify-between gap-4">
-                            {filter === 'deadline' ? <div className='w-[65%] md:w-[67.5%]'>
-                                <input
-                                    type="date"
-                                    name="deadline"
-                                    value={search}
-                                    onChange={(e) => setSearch(e?.target?.value)}
-                                    className="w-full p-2 border rounded-md"
-                                />
-                            </div> : <div className='w-[65%] md:w-[67.5%]'><SearchBar onSearch={setSearch} /></div>}
-                            <div className='w-[25%] md:w-[27.5%] md:max-w-[20%]'><CategoryFilter categories={categories} onFilter={(filter) => { setFilter(filter); setSearch('') }} /></div>
-                        </div>
-                        <div className="flex flex-col items-center space-y-4 mb-6 md:flex-row md:justify-between md:space-y-0 md:space-x-4">
-                            <button
-                                className="flex flex-row justify-center items-center gap-2 px-6 py-2 w-full md:w-auto bg-blue-600 text-white text-lg font-bold rounded-md shadow-md hover:bg-blue-500 transition-colors duration-300"
-                                onClick={openModal}
-                            >
-                                <span className="text-2xl">+</span>
-                                Add Task
-                            </button>
-                            <div className="w-full md:w-5/6">
-                                <div className="flex flex-col md:flex-row justify-between items-center space-y-2 md:space-y-0 md:space-x-4">
-                                    <div className={`mb-1 font-semibold ${isDarkMode ? "text-white" : 'text-gray-700'}  text-lg`}>
-                                        Progress: <span className={`${taskCompletionPercent > 49.9 ? 'text-[#16a34a]' : 'text-[#dc2626]'}`}>{taskCompletionPercent}%</span> done
+                    {user ? (
+                        <main className="container mx-auto p-4 overflow-y-auto flex-1">
+                            {/* <div className="mb-6">
+                            <h1 className={`flex items-center gap-2 text-2xl font-bold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+                                <AssignmentIcon /> TaskBuddy
+                            </h1>
+                        </div> */}
+
+                            <div className="flex items-center gap-6 mb-6 border-b border-gray-200 dark:border-gray-700">
+                                <button
+                                    className={`flex items-center gap-2 pb-2 font-bold transition-colors border-b-2 ${viewMode === 'list' ? 'border-gray-900 text-gray-900 dark:border-white dark:text-white' : 'border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'}`}
+                                    onClick={() => setViewMode('list')}
+                                >
+                                    <ViewListIcon fontSize="small" /> List
+                                </button>
+                                <button
+                                    className={`flex items-center gap-2 pb-2 font-bold transition-colors border-b-2 ${viewMode === 'board' ? 'border-gray-900 text-gray-900 dark:border-white dark:text-white' : 'border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'}`}
+                                    onClick={() => setViewMode('board')}
+                                >
+                                    <ViewColumnIcon fontSize="small" /> Board
+                                </button>
+                            </div>
+
+                            <div className="flex flex-col md:flex-row items-start md:items-center gap-4 mb-6">
+                                <div className={`text-sm font-bold ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>Filter by:</div>
+
+                                <div className="flex items-center gap-3">
+                                    <div className='w-[140px]'>
+                                        <CategoryFilter categories={categories} onFilter={(filter) => { setFilter(filter); setSearch('') }} />
                                     </div>
-                                    <div className={`text-sm ${isDarkMode ? "text-white" : 'text-gray-500'}`}>
-                                        <span className="font-medium">Note:</span> Done / (Todo + In Progress + Done) * 100
+                                    {filter === 'deadline' ? (
+                                        <div className='w-[140px]'>
+                                            <input
+                                                type="date"
+                                                name="deadline"
+                                                value={search}
+                                                onChange={(e) => setSearch(e?.target?.value)}
+                                                className={`w-full p-2.5 rounded-full border focus:ring-2 focus:ring-indigo-500 transition-colors outline-none text-sm ${isDarkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-gray-50 border-gray-200 text-gray-900'}`}
+                                            />
+                                        </div>
+                                    ) : (
+                                        <div className='w-[200px]'>
+                                            <SearchBar onSearch={setSearch} />
+                                        </div>
+                                    )}
+                                </div>
+
+                                {/* {viewMode === 'board' && ( */}
+                                <button
+                                    className="ml-auto flex items-center justify-center gap-2 px-5 py-2.5 w-full sm:w-auto bg-indigo-600 text-white font-medium rounded-full shadow-sm hover:bg-indigo-700 transition-all duration-300 transform hover:-translate-y-0.5"
+                                    onClick={openModal}
+                                >
+                                    <span className="text-xl leading-none">+</span>
+                                    <span>New Task</span>
+                                </button>
+                                {/* )} */}
+                            </div>
+
+                            {viewMode === 'board' && (
+                                <div className={`p-5 rounded-2xl shadow-sm mb-6 border transition-colors ${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-100'}`}>
+                                    <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+                                        <div className="w-full">
+                                            <div className="flex justify-between items-end mb-2">
+                                                <div className={`font-semibold text-lg ${isDarkMode ? "text-white" : 'text-gray-800'}`}>
+                                                    Your Progress
+                                                </div>
+                                                <div className="flex items-center gap-2">
+                                                    <span className={`text-2xl font-bold ${taskCompletionPercent > 49.9 ? 'text-emerald-500' : 'text-rose-500'}`}>
+                                                        {taskCompletionPercent}%
+                                                    </span>
+                                                    <span className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                                                        Completed
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <BorderLinearProgress variant="determinate" value={Number(taskCompletionPercent)} className="mt-2" />
+                                        </div>
                                     </div>
                                 </div>
-                                <BorderLinearProgress variant="determinate" value={Number(taskCompletionPercent)} className="mt-2" />
+                            )}
+
+                            {viewMode === 'list' ? (
+                                <TaskList
+                                    tasks={todoTask()}
+                                    addTask={handleSaveTask}
+                                    updateTaskStatus={(taskId: string, newStatus: string) => { handleEditStatus(taskId, newStatus) }}
+                                    editTaskModel={(id: string) => { setIsEditTaskModal({ id: id, isOpen: true }); }}
+                                />
+                            ) : (
+                                <TaskGrid tasks={todoTask()} deleteTask={(id: string) => { handleDeleteTask(id); }} editTaskModel={(id: string) => { setIsEditTaskModal({ id: id, isOpen: true }); }} viewTaskModal={(id: string) => { setIsViewTaskModal({ id: id, isOpen: true }); }} updateTaskStatus={(taskId: string, newStatus: string) => { handleEditStatus(taskId, newStatus) }} />
+                            )}
+                            <TaskModal isOpen={isModalOpen} onClose={closeModal} onSave={handleSaveTask} />
+                            <ViewTaskModal isOpen={isViewTaskModal?.isOpen} id={isViewTaskModal?.id} onClose={viewTaskClose} />
+                            <EditTaskModal isOpen={isEditTaskModal?.isOpen} id={isEditTaskModal?.id} onClose={editTaskClose} onSave={handleEditTask} />
+                        </main>) :
+                        <main className='flex flex-col justify-center items-center space-y-6 p-10'>
+                            <div className={`text-3xl font-semibold ${isDarkMode ? 'text-white' : 'text-gray-800'} mb-4`}>
+                                No User Found
                             </div>
-                        </div>
-                        <TaskGrid tasks={todoTask()} deleteTask={(id: string) => { handleDeleteTask(id); }} editTaskModel={(id: string) => { setIsEditTaskModal({ id: id, isOpen: true }); }} viewTaskModal={(id: string) => { setIsViewTaskModal({ id: id, isOpen: true }); }} updateTaskStatus={(taskId: string, newStatus: string) => { handleEditStatus(taskId, newStatus) }} />
-                        <TaskModal isOpen={isModalOpen} onClose={closeModal} onSave={handleSaveTask} />
-                        <ViewTaskModal isOpen={isViewTaskModal?.isOpen} id={isViewTaskModal?.id} onClose={viewTaskClose} />
-                        <EditTaskModal isOpen={isEditTaskModal?.isOpen} id={isEditTaskModal?.id} onClose={editTaskClose} onSave={handleEditTask} />
-                    </main>) :
-                    <main className='flex flex-col justify-center items-center space-y-6 p-10'>
-                        <div className={`text-3xl font-semibold ${isDarkMode ? 'text-white' : 'text-gray-800'} mb-4`}>
-                            No User Found
-                        </div>
-                        <p className={`text-lg ${isDarkMode ? 'text-gray-300' : 'text-gray-600'} text-center max-w-md`}>
-                            It seems you’re not logged in. If you already have an account, please log in below. Otherwise, create a new account to get started.
-                        </p>
-                        <div className="flex flex-col items-center space-y-4">
-                            <Link
-                                className="px-6 py-2 text-lg font-semibold text-blue-600 rounded-md bg-blue-100 hover:bg-blue-200 transition-colors duration-300"
-                                to="/signIn"
-                            >
-                                Login
-                            </Link>
-                            <span className="text-lg font-medium text-gray-500">or</span>
-                            <Link
-                                className="px-6 py-2 text-lg font-semibold text-white bg-blue-600 rounded-md hover:bg-blue-500 transition-colors duration-300"
-                                to="/signUp"
-                            >
-                                Sign Up
-                            </Link>
-                        </div>
-                    </main>
-                }
+                            <p className={`text-lg ${isDarkMode ? 'text-gray-300' : 'text-gray-600'} text-center max-w-md`}>
+                                It seems you’re not logged in. If you already have an account, please log in below. Otherwise, create a new account to get started.
+                            </p>
+                            <div className="flex flex-col items-center space-y-4">
+                                <Link
+                                    className="px-6 py-2 text-lg font-semibold text-blue-600 rounded-md bg-blue-100 hover:bg-blue-200 transition-colors duration-300"
+                                    to="/signIn"
+                                >
+                                    Login
+                                </Link>
+                                <span className="text-lg font-medium text-gray-500">or</span>
+                                <Link
+                                    className="px-6 py-2 text-lg font-semibold text-white bg-blue-600 rounded-md hover:bg-blue-500 transition-colors duration-300"
+                                    to="/signUp"
+                                >
+                                    Sign Up
+                                </Link>
+                            </div>
+                        </main>
+                    }
                 </main>
                 <Drawer open={open} anchor="right" onClose={() => setOpen(false)}>
                     <div className={`px-5 py-4 h-screen ${isDarkMode ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-900'} transition-colors duration-300`}>
