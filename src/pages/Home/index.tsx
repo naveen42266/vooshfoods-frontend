@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useState, useContext, useEffect, useCallback } from 'react';
 import { ThemeContext, ThemeProvider, } from '../../context/ThemeContext';
 import SearchBar from '../../components/SearchBar';
 import CategoryFilter from '../../components/CategoryFilter';
@@ -264,7 +264,7 @@ function Home() {
         return tasks;
     }
 
-    async function getAllTasksApi() {
+    const getAllTasksApi = useCallback(async () => {
         try {
             const response = await getAllTasks();
             if (response) {
@@ -275,7 +275,7 @@ function Home() {
         } catch (error) {
             console.error("Login error:", error);
         }
-    }
+    }, []);
 
     const BorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
         height: 12,
