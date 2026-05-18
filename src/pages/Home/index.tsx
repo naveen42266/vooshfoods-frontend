@@ -470,27 +470,68 @@ function Home() {
                             <ViewTaskModal isOpen={isViewTaskModal?.isOpen} id={isViewTaskModal?.id} onClose={viewTaskClose} />
                             <EditTaskModal isOpen={isEditTaskModal?.isOpen} id={isEditTaskModal?.id} onClose={editTaskClose} onSave={handleEditTask} />
                         </main>) :
-                        <main className='flex flex-col justify-center items-center space-y-6 p-10'>
-                            <div className={`text-3xl font-semibold ${isDarkMode ? 'text-white' : 'text-gray-800'} mb-4`}>
-                                No User Found
+                        <main className='flex flex-col justify-center items-center py-16 px-6 max-w-6xl mx-auto h-full'>
+                            {/* Hero Section */}
+                            <div className="text-center space-y-6 animate-fade-in mb-16">
+                                <div className="inline-block mb-4 px-5 py-2 rounded-full bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-300 text-sm font-extrabold tracking-widest uppercase shadow-sm">
+                                    🚀 Your Ultimate Productivity Hub
+                                </div>
+                                <h1 className={`text-4xl md:text-6xl font-extrabold tracking-tight leading-tight ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+                                    Master your day with <br className="hidden md:block" />
+                                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 to-purple-600">
+                                        Task Buddy
+                                    </span>
+                                </h1>
+                                <p className={`text-lg md:text-xl max-w-2xl mx-auto leading-relaxed ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                                    Seamlessly organize tasks, track deadlines, and visualize your progress with our beautiful and intuitive boards. Stay focused, organized, and calm.
+                                </p>
+                                
+                                <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-6">
+                                    <Link
+                                        to="/signUp"
+                                        className="w-full sm:w-auto px-8 py-3.5 text-lg font-bold text-white bg-indigo-600 rounded-xl hover:bg-indigo-700 shadow-lg hover:shadow-indigo-500/30 transition-all duration-300 transform hover:-translate-y-1"
+                                    >
+                                        Get Started for Free
+                                    </Link>
+                                    <Link
+                                        to="/signIn"
+                                        className={`w-full sm:w-auto px-8 py-3.5 text-lg font-bold rounded-xl border-2 transition-all duration-300 transform hover:-translate-y-1 ${isDarkMode ? 'border-gray-700 text-gray-300 hover:bg-gray-800' : 'border-gray-200 text-gray-700 hover:bg-gray-50'}`}
+                                    >
+                                        Log In to Account
+                                    </Link>
+                                </div>
                             </div>
-                            <p className={`text-lg ${isDarkMode ? 'text-gray-300' : 'text-gray-600'} text-center max-w-md`}>
-                                It seems you’re not logged in. If you already have an account, please log in below. Otherwise, create a new account to get started.
-                            </p>
-                            <div className="flex flex-col items-center space-y-4">
-                                <Link
-                                    className="px-6 py-2 text-lg font-semibold text-blue-600 rounded-md bg-blue-100 hover:bg-blue-200 transition-colors duration-300"
-                                    to="/signIn"
-                                >
-                                    Login
-                                </Link>
-                                <span className="text-lg font-medium text-gray-500">or</span>
-                                <Link
-                                    className="px-6 py-2 text-lg font-semibold text-white bg-blue-600 rounded-md hover:bg-blue-500 transition-colors duration-300"
-                                    to="/signUp"
-                                >
-                                    Sign Up
-                                </Link>
+
+                            {/* Features Grid */}
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 w-full mt-4 animate-fade-in" style={{ animationDelay: '0.2s' }}>
+                                {[
+                                    {
+                                        title: 'Visual Boards',
+                                        description: 'Move tasks through To-Do, In Progress, and Done with intuitive drag-and-drop interfaces.',
+                                        icon: '📋',
+                                        color: 'from-blue-400 to-blue-600'
+                                    },
+                                    {
+                                        title: 'Never Miss Deadlines',
+                                        description: 'Keep track of important dates with built-in due dates, status tags, and priority markers.',
+                                        icon: '⏰',
+                                        color: 'from-emerald-400 to-emerald-600'
+                                    },
+                                    {
+                                        title: 'Stay in Sync',
+                                        description: 'Access your tasks from any device. Everything updates in real-time securely on the cloud.',
+                                        icon: '☁️',
+                                        color: 'from-purple-400 to-purple-600'
+                                    }
+                                ].map((feature, idx) => (
+                                    <div key={idx} className={`p-8 rounded-2xl border transition-all duration-300 hover:shadow-xl ${isDarkMode ? 'bg-gray-800/40 border-gray-700 hover:border-gray-500' : 'bg-white border-gray-100 hover:border-gray-300'} group`}>
+                                        <div className={`w-16 h-16 mb-6 rounded-2xl flex items-center justify-center text-3xl bg-gradient-to-br ${feature.color} shadow-md transform group-hover:scale-110 group-hover:rotate-3 transition-transform duration-300`}>
+                                            <span className="drop-shadow-sm">{feature.icon}</span>
+                                        </div>
+                                        <h3 className={`text-xl font-bold mb-3 tracking-tight ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>{feature.title}</h3>
+                                        <p className={`leading-relaxed text-sm md:text-base ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>{feature.description}</p>
+                                    </div>
+                                ))}
                             </div>
                         </main>
                     }
