@@ -5,7 +5,7 @@ import { googleLoginSignup, signup } from "../../services/user";
 import Header from "../../components/header";
 import { useGoogleLogin } from "@react-oauth/google";
 import { useUserDetails } from "../../context/userDetails";
-import { Bounce, toast, ToastContainer } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import { PropagateLoader } from "react-spinners";
 
@@ -14,7 +14,7 @@ const SignUp = () => {
     const [formData, setFormData] = useState({ firstName: "", lastName: "", email: "", gender: "", password: "", confirmPassword: "" });
     const [open, setOpen] = useState<boolean>(false);
     const [inProgress, setInProgress] = useState(false)
-    const { user, updateUser } = useUserDetails();
+    const { updateUser } = useUserDetails();
     const navigate = useNavigate();
 
     const handleInputChange = (e: { target: { name: any; value: any; }; }) => {
@@ -30,7 +30,7 @@ const SignUp = () => {
         e.preventDefault();
         try {
             const response = await signup(formData.firstName, formData.lastName, formData?.email, formData?.password, formData?.confirmPassword, formData?.gender);
-            if (response.message == 'Signup successful') {
+            if (response.message === 'Signup successful') {
                 console.log(response.message);
                 localStorage.setItem("signUpMessage", response.message);
                 navigate("/signIn");
@@ -70,25 +70,25 @@ const SignUp = () => {
         onError: error => console.log(error)
     });
 
-    const googleLoginApi = async (credential: any) => {
-        try {
-            const response = await googleLoginSignup(credential);
-            if (response.message === "Google login successful") {
-                console.log(response.message);
-                updateUser(response.user);
-                localStorage.setItem("loginMessage", response.message);
-                localStorage.setItem("authToken", response.token);
-                const loginTime = Date.now();
-                localStorage.setItem("loginTime", loginTime.toString());
-                navigate("/");
-            } else {
-                console.log("Login failed: No response from server");
-            }
-        } catch (error) {
-            console.error("Login error:", error);
-        }
+    // const googleLoginApi = async (credential: any) => {
+    //     try {
+    //         const response = await googleLoginSignup(credential);
+    //         if (response.message === "Google login successful") {
+    //             console.log(response.message);
+    //             updateUser(response.user);
+    //             localStorage.setItem("loginMessage", response.message);
+    //             localStorage.setItem("authToken", response.token);
+    //             const loginTime = Date.now();
+    //             localStorage.setItem("loginTime", loginTime.toString());
+    //             navigate("/");
+    //         } else {
+    //             console.log("Login failed: No response from server");
+    //         }
+    //     } catch (error) {
+    //         console.error("Login error:", error);
+    //     }
 
-    }
+    // }
 
     return (
         <ThemeProvider>

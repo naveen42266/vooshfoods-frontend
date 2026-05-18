@@ -4,10 +4,10 @@ import { Link, useNavigate } from "react-router-dom";
 import { googleLoginSignup, login } from "../../services/user";
 import { useUserDetails } from "../../context/userDetails";
 import Header from "../../components/header";
-import { Avatar, Drawer } from "@mui/material";
-import GoogleOAuth from "../../components/googleOAuth";
+// import { Avatar, Drawer } from "@mui/material";
+// import GoogleOAuth from "../../components/googleOAuth";
 import { useGoogleLogin } from '@react-oauth/google';
-import { Bounce, toast, ToastContainer } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import { PropagateLoader } from "react-spinners";
 
@@ -83,26 +83,26 @@ const SignIn = () => {
         onError: error => console.log(error)
     });
 
-    const googleLoginApi = async (credential: any) => {
-        console.log(credential, "credential")
-        try {
-            const response = await googleLoginSignup(credential);
-            if (response.message === "Google login successful") {
-                console.log(response.message);
-                updateUser(response.user);
-                localStorage.setItem("loginMessage", response.message);
-                localStorage.setItem("authToken", response.token);
-                const loginTime = Date.now();
-                localStorage.setItem("loginTime", loginTime.toString());
-                navigate("/");
-            } else {
-                console.log("Login failed: No response from server");
-            }
-        } catch (error) {
-            console.error("Login error:", error);
-        }
+    // const googleLoginApi = async (credential: any) => {
+    //     console.log(credential, "credential")
+    //     try {
+    //         const response = await googleLoginSignup(credential);
+    //         if (response.message === "Google login successful") {
+    //             console.log(response.message);
+    //             updateUser(response.user);
+    //             localStorage.setItem("loginMessage", response.message);
+    //             localStorage.setItem("authToken", response.token);
+    //             const loginTime = Date.now();
+    //             localStorage.setItem("loginTime", loginTime.toString());
+    //             navigate("/");
+    //         } else {
+    //             console.log("Login failed: No response from server");
+    //         }
+    //     } catch (error) {
+    //         console.error("Login error:", error);
+    //     }
 
-    }
+    // }
 
     useEffect(() => {
         // debugger

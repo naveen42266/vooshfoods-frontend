@@ -12,13 +12,13 @@ import TaskGrid from '../../components/tasksGrid';
 import TaskList from '../../components/taskList';
 import ViewTaskModal from '../../components/viewTask';
 import EditTaskModal from '../../components/editTask';
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import AssignmentIcon from '@mui/icons-material/Assignment';
+// import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+// import AssignmentIcon from '@mui/icons-material/Assignment';
 import ViewListIcon from '@mui/icons-material/ViewList';
 import ViewColumnIcon from '@mui/icons-material/ViewColumn';
 import { Avatar, Drawer, LinearProgress, linearProgressClasses, styled } from '@mui/material';
 import Header from '../../components/header';
-import { Bounce, toast, ToastContainer } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 
 interface Task {
@@ -491,9 +491,9 @@ function Home() {
                                 <h2 className="text-2xl font-bold mb-3">My Profile</h2>
 
                                 <Avatar
-                                    src={user?.gender == "Male"
+                                    src={user?.gender === "Male"
                                         ? "https://png.pngtree.com/png-clipart/20200224/original/pngtree-cartoon-color-simple-male-avatar-png-image_5230557.jpg"
-                                        : user?.gender == "Female" ? "https://w7.pngwing.com/pngs/4/736/png-transparent-female-avatar-girl-face-woman-user-flat-classy-users-icon.png" : user?.profilePicture ? user?.profilePicture : ''}
+                                        : user?.gender === "Female" ? "https://w7.pngwing.com/pngs/4/736/png-transparent-female-avatar-girl-face-woman-user-flat-classy-users-icon.png" : user?.profilePicture ? user?.profilePicture : ''}
                                     sx={{ height: 120, width: 120 }}
                                     className="object-cover mb-4 shadow-md"
                                     alt={`${user?.gender} Avatar`}
