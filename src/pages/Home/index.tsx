@@ -267,15 +267,16 @@ function Home() {
     const getAllTasksApi = useCallback(async () => {
         try {
             const response = await getAllTasks();
+
             if (response) {
-                setTasks(response)
+                setTasks(response);
             } else {
                 console.log("Login failed: No response from server");
             }
         } catch (error) {
             console.error("Login error:", error);
         }
-    }, []);
+    }, [setTasks]);
 
     const BorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
         height: 12,
