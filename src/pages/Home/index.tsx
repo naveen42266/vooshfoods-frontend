@@ -303,13 +303,17 @@ function Home() {
     useEffect(() => {
         if (token) {
             const decoded: any = jwtDecode(token);
-            const userData: any = {};
-            userData.userId = decoded.id;
-            userData.email = decoded.email;
-            userData.firstName = decoded.firstName;
-            userData.lastName = decoded.lastName;
-            userData.profilePicture = decoded.profilePicture;
+
+            const userData: any = {
+                userId: decoded.id,
+                email: decoded.email,
+                firstName: decoded.firstName,
+                lastName: decoded.lastName,
+                profilePicture: decoded.profilePicture,
+            };
+
             updateUser(userData);
+
             toast.success('User logged in successfully', {
                 position: "top-right",
                 autoClose: 5000,
@@ -317,30 +321,33 @@ function Home() {
                 closeOnClick: true,
                 pauseOnHover: true,
                 draggable: true,
-                progress: undefined,
             });
+
             localStorage.setItem("authToken", token);
+
             navigate("/", { replace: true });
         }
-
-    }, [token])
+    }, [token, navigate, updateUser]);
 
     useEffect(() => {
         const token = localStorage.getItem('authToken');
+
         if (token) {
             const decoded: any = jwtDecode(token);
             const currentTime = Date.now() / 1000;
+
             if (decoded.exp < currentTime) {
                 localStorage.removeItem("user");
                 localStorage.removeItem("authToken");
                 localStorage.removeItem("loginMessage");
                 localStorage.removeItem("loginTime");
-            }
-            else {
+            } else {
                 getAllTasksApi();
             }
         }
+
         const loginMessage = localStorage.getItem("loginMessage");
+
         if (loginMessage) {
             toast.success('User logged in successfully', {
                 position: "top-right",
@@ -349,12 +356,11 @@ function Home() {
                 closeOnClick: true,
                 pauseOnHover: true,
                 draggable: true,
-                progress: undefined,
             });
+
             localStorage.removeItem("loginMessage");
         }
-    }, [])
-
+    }, [getAllTasksApi]);
 
     return (
         <ThemeProvider>
