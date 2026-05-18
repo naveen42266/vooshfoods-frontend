@@ -172,7 +172,7 @@ const TaskList: React.FC<TaskListProps> = ({ tasks, addTask, updateTaskStatus, e
                                                 onKeyDown={(e) => { if (e.key === 'Enter') handleSaveInlineTask() }}
                                                 className={`w-full bg-transparent border-none outline-none font-medium placeholder-gray-400 ${isDarkMode ? 'text-white' : 'text-gray-800'}`}
                                             />
-                                            <div className="flex items-center gap-3 mt-4">
+                                            <div className="flex items-center gap-3 mt-4 md:mt-2">
                                                 <button
                                                     disabled={inProgress || !newTaskTitle.trim()}
                                                     onClick={handleSaveInlineTask}
@@ -193,34 +193,35 @@ const TaskList: React.FC<TaskListProps> = ({ tasks, addTask, updateTaskStatus, e
                                             </div>
                                         </div>
 
-                                        <div className="w-[150px] flex items-center justify-center shrink-0">
-                                            <div className={`flex items-center gap-2 px-3 py-1.5 rounded-full border cursor-pointer ${isDarkMode ? 'border-gray-600 bg-gray-700 text-gray-300 hover:bg-gray-600' : 'border-gray-300 bg-white text-gray-600 hover:bg-gray-50'}`}>
-                                                <CalendarTodayIcon sx={{ fontSize: 14 }} />
-                                                <input
-                                                    type="date"
-                                                    value={newTaskDate}
-                                                    onChange={(e) => setNewTaskDate(e.target.value)}
-                                                    className="bg-transparent border-none outline-none text-xs w-[85px] cursor-pointer appearance-none"
-                                                    style={{ colorScheme: isDarkMode ? 'dark' : 'light' }}
-                                                />
+                                        <div className="flex items-center justify-between md:justify-end gap-4 w-full md:w-auto mt-2 md:mt-0">
+                                            <div className="md:w-[150px] flex items-center justify-start md:justify-center shrink-0">
+                                                <div className={`flex items-center gap-2 px-3 py-1.5 rounded-full border cursor-pointer ${isDarkMode ? 'border-gray-600 bg-gray-700 text-gray-300 hover:bg-gray-600' : 'border-gray-300 bg-white text-gray-600 hover:bg-gray-50'}`}>
+                                                    <CalendarTodayIcon sx={{ fontSize: 14 }} />
+                                                    <input
+                                                        type="date"
+                                                        value={newTaskDate}
+                                                        onChange={(e) => setNewTaskDate(e.target.value)}
+                                                        className="bg-transparent border-none outline-none text-xs w-[85px] cursor-pointer appearance-none"
+                                                        style={{ colorScheme: isDarkMode ? 'dark' : 'light' }}
+                                                    />
+                                                </div>
                                             </div>
-                                        </div>
-
-                                        <div className="w-[150px] flex items-center justify-center shrink-0">
-                                            <StatusDropdown currentStatus={newTaskStatus} onChange={setNewTaskStatus} id="new" />
+    
+                                            <div className="md:w-[150px] flex items-center justify-end md:justify-center shrink-0">
+                                                <StatusDropdown currentStatus={newTaskStatus} onChange={setNewTaskStatus} id="new" />
+                                            </div>
                                         </div>
                                     </div>
                                 )}
                             </div>
                         )}
 
-                        {/* Task Items */}
                         {sectionTasks.map((task, index) => (
                             <div
                                 key={task.id}
                                 draggable
                                 onDragStart={(e) => handleDragStart(e, task.id)}
-                                className={`flex items-center justify-between py-3 px-4 border-b group cursor-grab ${isDarkMode ? 'border-gray-700 hover:bg-gray-750' : 'border-gray-200 hover:bg-gray-100'}`}
+                                className={`flex flex-col md:flex-row md:items-center justify-between py-3 px-4 border-b group cursor-grab gap-3 md:gap-0 ${isDarkMode ? 'border-gray-700 hover:bg-gray-750' : 'border-gray-200 hover:bg-gray-100'}`}
                             >
                                 <div className="flex-1 flex items-center gap-3">
                                     <div className={`opacity-50 hover:opacity-100 ${isDarkMode ? 'text-gray-500' : 'text-gray-400'}`}>
@@ -243,16 +244,18 @@ const TaskList: React.FC<TaskListProps> = ({ tasks, addTask, updateTaskStatus, e
                                     </div>
                                 </div>
 
-                                <div className={`w-[150px] shrink-0 text-sm flex justify-center ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
-                                    {formatDueDate(task.deadline)}
-                                </div>
-
-                                <div className="w-[150px] shrink-0 flex justify-center">
-                                    <StatusDropdown
-                                        currentStatus={task.status}
-                                        onChange={(newStatus) => updateTaskStatus(task.id, newStatus)}
-                                        id={task.id}
-                                    />
+                                <div className="flex items-center justify-between md:justify-end w-full md:w-auto pl-8 md:pl-0">
+                                    <div className={`w-[150px] shrink-0 text-sm flex md:justify-center ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>
+                                        {formatDueDate(task.deadline)}
+                                    </div>
+    
+                                    <div className="w-[150px] shrink-0 flex justify-end md:justify-center">
+                                        <StatusDropdown
+                                            currentStatus={task.status}
+                                            onChange={(newStatus) => updateTaskStatus(task.id, newStatus)}
+                                            id={task.id}
+                                        />
+                                    </div>
                                 </div>
                             </div>
                         ))}
@@ -270,7 +273,7 @@ const TaskList: React.FC<TaskListProps> = ({ tasks, addTask, updateTaskStatus, e
     return (
         <div className="w-full animate-fade-in">
             {/* Header Row */}
-            <div className={`flex items-center justify-between py-2 px-4 mb-2 font-bold text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+            <div className={`hidden md:flex items-center justify-between py-2 px-4 mb-2 font-bold text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
                 <div className="flex-1">Task name</div>
                 <div className="w-[150px] text-center">Due on</div>
                 <div className="w-[150px] text-center">Task Status</div>

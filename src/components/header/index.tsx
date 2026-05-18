@@ -20,7 +20,7 @@ const Header: React.FC<HeaderProps> = ({ toggleTheme, isDarkMode, setOpen }) => 
                     <div className="bg-indigo-600 text-white p-1.5 rounded-lg shadow-sm flex items-center justify-center">
                         <TaskIcon fontSize='medium' />
                     </div>
-                    <span className="tracking-tight text-indigo-600 dark:text-indigo-400">Task Buddy</span>
+                    <span className="tracking-tight text-indigo-600 dark:text-indigo-400 block">Task Buddy</span>
                 </Link>
                 <div className='flex flex-row justify-end gap-3 items-center'>
                     {/* <button

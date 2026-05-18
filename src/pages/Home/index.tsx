@@ -16,6 +16,10 @@ import EditTaskModal from '../../components/editTask';
 // import AssignmentIcon from '@mui/icons-material/Assignment';
 import ViewListIcon from '@mui/icons-material/ViewList';
 import ViewColumnIcon from '@mui/icons-material/ViewColumn';
+import CloseIcon from '@mui/icons-material/Close';
+import LogoutIcon from '@mui/icons-material/Logout';
+import EmailIcon from '@mui/icons-material/Email';
+import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
 import { Avatar, Drawer, LinearProgress, linearProgressClasses, styled } from '@mui/material';
 import Header from '../../components/header';
 import { toast, ToastContainer } from "react-toastify";
@@ -397,12 +401,12 @@ function Home() {
                             <div className="flex flex-col md:flex-row items-start md:items-center gap-4 mb-6">
                                 <div className={`text-sm font-bold ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>Filter by:</div>
 
-                                <div className="flex items-center gap-3">
-                                    <div className='w-[140px]'>
+                                <div className="flex flex-col sm:flex-row flex-wrap items-center gap-3 w-full md:w-auto">
+                                    <div className='w-full sm:w-[140px]'>
                                         <CategoryFilter categories={categories} onFilter={(filter) => { setFilter(filter); setSearch('') }} />
                                     </div>
                                     {filter === 'deadline' ? (
-                                        <div className='w-[140px]'>
+                                        <div className='w-full sm:w-[140px]'>
                                             <input
                                                 type="date"
                                                 name="deadline"
@@ -412,7 +416,7 @@ function Home() {
                                             />
                                         </div>
                                     ) : (
-                                        <div className='w-[200px]'>
+                                        <div className='w-full sm:w-[200px]'>
                                             <SearchBar onSearch={setSearch} />
                                         </div>
                                     )}
@@ -420,7 +424,7 @@ function Home() {
 
                                 {/* {viewMode === 'board' && ( */}
                                 <button
-                                    className="ml-auto flex items-center justify-center gap-2 px-5 py-2.5 w-full sm:w-auto bg-indigo-600 text-white font-medium rounded-full shadow-sm hover:bg-indigo-700 transition-all duration-300 transform hover:-translate-y-0.5"
+                                    className="mt-2 md:mt-0 md:ml-auto flex items-center justify-center gap-2 px-5 py-2.5 w-full sm:w-auto bg-indigo-600 text-white font-medium rounded-full shadow-sm hover:bg-indigo-700 transition-all duration-300 transform hover:-translate-y-0.5"
                                     onClick={openModal}
                                 >
                                     <span className="text-xl leading-none">+</span>
@@ -492,62 +496,93 @@ function Home() {
                     }
                 </main>
                 <Drawer open={open} anchor="right" onClose={() => setOpen(false)}>
-                    <div className={`px-5 py-4 h-screen ${isDarkMode ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-900'} transition-colors duration-300`}>
-                        {user ? (
-                            <div className="flex flex-col items-center p-6 space-y-4">
-                                <h2 className="text-2xl font-bold mb-3">My Profile</h2>
-
-                                <Avatar
-                                    src={user?.gender === "Male"
-                                        ? "https://png.pngtree.com/png-clipart/20200224/original/pngtree-cartoon-color-simple-male-avatar-png-image_5230557.jpg"
-                                        : user?.gender === "Female" ? "https://w7.pngwing.com/pngs/4/736/png-transparent-female-avatar-girl-face-woman-user-flat-classy-users-icon.png" : user?.profilePicture ? user?.profilePicture : ''}
-                                    sx={{ height: 120, width: 120 }}
-                                    className="object-cover mb-4 shadow-md"
-                                    alt={`${user?.gender} Avatar`}
-                                />
-
-                                <div className="text-center space-y-1">
-                                    <div className="text-xl font-semibold">
-                                        {user?.firstName} {user?.lastName}
+                    <div className={`w-[85vw] sm:w-[350px] flex flex-col h-screen ${isDarkMode ? 'bg-gray-900 text-white' : 'bg-gray-50 text-gray-900'} transition-colors duration-300`}>
+                        {/* Drawer Header with Close Button */}
+                        <div className={`p-4 flex justify-between items-center border-b ${isDarkMode ? 'border-gray-800' : 'border-gray-200'}`}>
+                            <h2 className="text-xl font-bold tracking-tight">My Profile</h2>
+                            <button 
+                                onClick={() => setOpen(false)}
+                                className={`p-2 rounded-full transition-colors ${isDarkMode ? 'hover:bg-gray-800 text-gray-400 hover:text-white' : 'hover:bg-gray-200 text-gray-500 hover:text-gray-900'}`}
+                            >
+                                <CloseIcon fontSize="small" />
+                            </button>
+                        </div>
+                        
+                        {/* Drawer Body */}
+                        <div className="flex-1 overflow-y-auto">
+                            {user ? (
+                                <div className="flex flex-col items-center p-6 space-y-6">
+                                    
+                                    {/* Avatar section with gradient ring */}
+                                    <div className="relative">
+                                        <div className="absolute inset-0 bg-gradient-to-tr from-indigo-500 to-purple-500 rounded-full blur-sm opacity-70 animate-pulse"></div>
+                                        <div className={`relative p-1 rounded-full ${isDarkMode ? 'bg-gray-900' : 'bg-white'}`}>
+                                            <Avatar
+                                                src={user?.gender === "Male"
+                                                    ? "https://png.pngtree.com/png-clipart/20200224/original/pngtree-cartoon-color-simple-male-avatar-png-image_5230557.jpg"
+                                                    : user?.gender === "Female" ? "https://w7.pngwing.com/pngs/4/736/png-transparent-female-avatar-girl-face-woman-user-flat-classy-users-icon.png" : user?.profilePicture ? user?.profilePicture : ''}
+                                                sx={{ height: 110, width: 110 }}
+                                                className="object-cover shadow-lg"
+                                                alt={`${user?.gender} Avatar`}
+                                            />
+                                        </div>
                                     </div>
-                                    <div className={`${isDarkMode ? "text-gray-300" : "text-gray-600"}`}>{user?.email}</div>
-                                    <div className={`${isDarkMode ? "text-gray-300" : "text-gray-600"} capitalize`}>{user?.gender}</div>
-                                </div>
-
-                                <button
-                                    className="mt-5 px-4 py-2 bg-red-600 text-white rounded-lg font-medium shadow hover:bg-red-500 transition-colors duration-300"
-                                    onClick={handleLogout}
-                                >
-                                    Logout
-                                </button>
-                            </div>
-
-                        ) : (
-                            <div className="flex flex-col justify-center items-center px-8">
-                                <div className='text-2xl font-medium pb-5'>No User found</div>
-                                <img src="https://img.freepik.com/premium-vector/flat-design-no-user-found_108061-1605.jpg" className='max-h-[300px] max-w-[300px]' alt="no user found" />
-                                <p className={`text-lg text-center max-w-md mb-4`}>
-                                    It seems you’re not logged in. If you already have an account, please log in below. Otherwise, create a new account to get started.
-                                </p>
-                                <div className="flex flex-col items-center space-y-4">
-                                    <Link
-                                        className="px-6 py-2 text-lg font-semibold text-blue-600 rounded-md bg-blue-100 hover:bg-blue-200 transition-colors duration-300"
-                                        to="/signIn"
+                                    
+                                    {/* User Details */}
+                                    <div className="text-center w-full space-y-4">
+                                        <div>
+                                            <h3 className="text-2xl font-bold">{user?.firstName} {user?.lastName}</h3>
+                                            <span className={`inline-block mt-1 px-3 py-1 text-xs font-semibold rounded-full capitalize ${isDarkMode ? 'bg-gray-800 text-gray-300' : 'bg-gray-200 text-gray-700'}`}>
+                                                {user?.gender || 'User'}
+                                            </span>
+                                        </div>
+                                        
+                                        <div className={`flex items-center justify-center gap-2 p-3 rounded-xl border ${isDarkMode ? 'bg-gray-800/50 border-gray-700' : 'bg-white border-gray-200'} shadow-sm`}>
+                                            <EmailIcon fontSize="small" className="text-indigo-500" />
+                                            <span className={`text-sm font-medium ${isDarkMode ? "text-gray-300" : "text-gray-700"}`}>
+                                                {user?.email}
+                                            </span>
+                                        </div>
+                                    </div>
+                                    
+                                    {/* Action Button */}
+                                    <button
+                                        className="w-full mt-4 flex items-center justify-center gap-2 px-4 py-3 bg-red-50 text-red-600 hover:bg-red-100 dark:bg-red-900/20 dark:text-red-400 dark:hover:bg-red-900/40 rounded-xl font-bold transition-all duration-300 hover:shadow-sm group"
+                                        onClick={handleLogout}
                                     >
-                                        Login
-                                    </Link>
-
-                                    <span className="text-lg font-medium text-gray-500">or</span>
-
-                                    <Link
-                                        className="px-6 py-2 text-lg font-semibold text-white bg-blue-600 rounded-md hover:bg-blue-500 transition-colors duration-300"
-                                        to="/signUp"
-                                    >
-                                        Sign Up
-                                    </Link>
+                                        <LogoutIcon fontSize="small" className="group-hover:-translate-x-1 transition-transform" />
+                                        Logout
+                                    </button>
                                 </div>
-                            </div>
-                        )}
+                            ) : (
+                                <div className="flex flex-col justify-center items-center px-8 py-10 h-full">
+                                    <div className={`p-4 rounded-full mb-6 ${isDarkMode ? 'bg-gray-800' : 'bg-indigo-50'}`}>
+                                        <PersonOutlineIcon sx={{ fontSize: 60 }} className="text-indigo-500" />
+                                    </div>
+                                    
+                                    <h3 className='text-2xl font-bold mb-3'>Welcome</h3>
+                                    
+                                    <p className={`text-center text-sm mb-8 leading-relaxed ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>
+                                        You are currently not logged in. Join us to manage your tasks effectively!
+                                    </p>
+                                    
+                                    <div className="flex flex-col w-full space-y-3">
+                                        <Link
+                                            className="w-full text-center px-6 py-3 font-semibold text-white bg-indigo-600 rounded-xl hover:bg-indigo-700 shadow-sm hover:shadow transition-all duration-300 transform hover:-translate-y-0.5"
+                                            to="/signIn"
+                                        >
+                                            Login
+                                        </Link>
+                                        <Link
+                                            className={`w-full text-center px-6 py-3 font-semibold rounded-xl border transition-all duration-300 ${isDarkMode ? 'border-gray-700 text-gray-300 hover:bg-gray-800' : 'border-gray-300 text-gray-700 hover:bg-gray-100'}`}
+                                            to="/signUp"
+                                        >
+                                            Sign Up
+                                        </Link>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
                     </div>
                 </Drawer>
             </div>
