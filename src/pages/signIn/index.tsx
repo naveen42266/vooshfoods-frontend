@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 import { ThemeContext, ThemeProvider } from "../../context/ThemeContext";
 import { Link, useNavigate } from "react-router-dom";
-import { googleLoginSignup, login } from "../../services/user";
+import { login } from "../../services/user";
 import { useUserDetails } from "../../context/userDetails";
 import Header from "../../components/header";
 // import { Avatar, Drawer } from "@mui/material";

@@ -1,10 +1,10 @@
 import { useContext, useState } from "react";
 import { ThemeContext, ThemeProvider } from "../../context/ThemeContext";
 import { Link, useNavigate } from "react-router-dom";
-import { googleLoginSignup, signup } from "../../services/user";
+import { signup } from "../../services/user";
 import Header from "../../components/header";
 import { useGoogleLogin } from "@react-oauth/google";
-import { useUserDetails } from "../../context/userDetails";
+// import { useUserDetails } from "../../context/userDetails";
 import { toast, ToastContainer } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import { PropagateLoader } from "react-spinners";
@@ -14,7 +14,7 @@ const SignUp = () => {
     const [formData, setFormData] = useState({ firstName: "", lastName: "", email: "", gender: "", password: "", confirmPassword: "" });
     const [open, setOpen] = useState<boolean>(false);
     const [inProgress, setInProgress] = useState(false)
-    const { updateUser } = useUserDetails();
+    // const { updateUser } = useUserDetails();
     const navigate = useNavigate();
 
     const handleInputChange = (e: { target: { name: any; value: any; }; }) => {
