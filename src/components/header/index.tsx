@@ -3,7 +3,7 @@
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { Link } from "react-router-dom";
 import React from 'react';
-import TaskIcon from '@mui/icons-material/Task';
+import TaskBuddyLogo from '../../assets/Task_Buddy_Logo.png';
 
 interface HeaderProps {
     toggleTheme: () => void,
@@ -17,8 +17,8 @@ const Header: React.FC<HeaderProps> = ({ toggleTheme, isDarkMode, setOpen }) => 
         <div className={`sticky top-0 z-50 w-full transition-colors duration-300 ${isDarkMode ? 'bg-gray-900/80 border-b border-gray-800 text-white' : 'bg-white/80 border-b border-gray-200 text-gray-900'} backdrop-blur-md shadow-sm`}>
             <div className="container mx-auto px-4 py-3 flex justify-between items-center">
                 <Link className="text-2xl font-bold flex items-center gap-2 hover:opacity-80 transition-opacity" to={"/"}>
-                    <div className="bg-indigo-600 text-white p-1.5 rounded-lg shadow-sm flex items-center justify-center">
-                        <TaskIcon fontSize='medium' />
+                    <div className="p-1.5 rounded-lg shadow-sm flex items-center justify-center">
+                        <img src={TaskBuddyLogo} className="w-10 h-10" alt="Task Buddy Logo" />
                     </div>
                     <span className="tracking-tight text-indigo-600 dark:text-indigo-400 block">Task Buddy</span>
                 </Link>
